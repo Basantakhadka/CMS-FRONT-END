@@ -21,6 +21,7 @@ A modern Content Management System frontend built with React 18, TypeScript, Ant
 - **React Router DOM**: 7.12.0
 - **Vite**: 7.2.5
 
+
 ## Getting Started
 
 ### Prerequisites
@@ -168,3 +169,8 @@ const newUser = await userApi.createUser({
 ## License
 
 This project is licensed under the MIT License.
+
+
+
+## node version required
+ version:  > 20
