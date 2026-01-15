@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Row, Col, Statistic } from 'antd';
 import { UserOutlined, ShoppingCartOutlined, DollarOutlined, RiseOutlined } from '@ant-design/icons';
 
-const Dashboard: React.FC = () => {
+const DashboardView: React.FC = () => {
   return (
     <div>
       <h1 style={{ marginBottom: 24 }}>Dashboard</h1>
@@ -51,10 +51,10 @@ const Dashboard: React.FC = () => {
         </Col>
       </Row>
 
-      <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
-        <Col span={24}>
+      <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+        <Col xs={24}>
           <Card title="Recent Activity">
-            <p>Welcome to your CMS Dashboard! This is where you can manage your content.</p>
+            <p>Dashboard content and charts will go here...</p>
           </Card>
         </Col>
       </Row>
@@ -62,4 +62,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard;
+export default DashboardView;

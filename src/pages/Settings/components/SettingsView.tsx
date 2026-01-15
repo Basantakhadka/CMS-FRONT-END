@@ -4,7 +4,7 @@ import { SaveOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
-const Settings: React.FC = () => {
+const SettingsView: React.FC = () => {
   const [form] = Form.useForm();
 
   const onFinish = (values: any) => {
@@ -75,24 +75,39 @@ const Settings: React.FC = () => {
 
       <Card title="Account Settings">
         <Form layout="vertical">
-          <Form.Item label="Email">
-            <Input placeholder="admin@example.com" />
+          <Form.Item
+            label="Email"
+            name="email"
+            initialValue="admin@example.com"
+          >
+            <Input type="email" />
           </Form.Item>
 
-          <Form.Item label="Current Password">
+          <Form.Item
+            label="Current Password"
+            name="currentPassword"
+          >
             <Input.Password placeholder="Enter current password" />
           </Form.Item>
 
-          <Form.Item label="New Password">
+          <Form.Item
+            label="New Password"
+            name="newPassword"
+          >
             <Input.Password placeholder="Enter new password" />
           </Form.Item>
 
-          <Form.Item label="Confirm Password">
+          <Form.Item
+            label="Confirm New Password"
+            name="confirmPassword"
+          >
             <Input.Password placeholder="Confirm new password" />
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary">Update Account</Button>
+            <Button type="primary" icon={<SaveOutlined />}>
+              Update Account
+            </Button>
           </Form.Item>
         </Form>
       </Card>
@@ -100,4 +115,4 @@ const Settings: React.FC = () => {
   );
 };
 
-export default Settings;
+export default SettingsView;

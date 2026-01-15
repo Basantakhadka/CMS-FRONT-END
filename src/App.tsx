@@ -1,10 +1,13 @@
-import { ConfigProvider } from 'antd';
+import { Suspense, lazy } from 'react';
+import { ConfigProvider, Spin } from 'antd';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './components/Layout/MainLayout';
-import Login from './pages/Login';
 import './App.css';
+
+// Lazy load page modules
+const AuthRoutes = lazy(() => import('./pages/Auth'));
 
 function App() {
   return (
@@ -19,18 +22,32 @@ function App() {
     >
       <AuthProvider>
         <Router>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/*"
-              element={
-                <ProtectedRoute>
-                  <MainLayout />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
+          <Suspense 
+            fallback={
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <Spin size="large" tip="Loading..." />
+              </div>
+            }
+          >
+            <Routes>
+              {/* Auth Routes */}
+              <Route path="/auth/*" element={<AuthRoutes />} />
+              <Route path="/login" element={<Navigate to="/auth/login" replace />} />
+              
+              {/* Protected Routes - All app routes through MainLayout */}
+              <Route
+                path="/*"
+                element={
+                  <ProtectedRoute>
+                    <MainLayout />
+                  </ProtectedRoute>
+                }
+              />
+              
+              {/* Root redirect to login */}
+              <Route path="/" element={<Navigate to="/auth/login" replace />} />
+            </Routes>
+          </Suspense>
         </Router>
       </AuthProvider>
     </ConfigProvider>
