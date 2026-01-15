@@ -1,21 +1,20 @@
 .login-container {
-  min-height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
 }
 
 .login-wrapper {
   width: 100%;
-  max-width: 450px;
+  max-width: 400px;
+  padding: 20px;
 }
 
 .login-card {
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
-  overflow: hidden;
 }
 
 .login-header {
@@ -31,9 +30,8 @@
 }
 
 .login-header p {
-  color: #666;
+  color: rgba(0, 0, 0, 0.45);
   font-size: 14px;
-  margin: 0;
 }
 
 .login-info {
@@ -47,28 +45,19 @@
 .login-info p {
   margin: 4px 0;
   font-size: 13px;
-  color: #666;
+  color: rgba(0, 0, 0, 0.65);
 }
 
-.login-info p strong {
-  color: #333;
+.login-info strong {
+  color: rgba(0, 0, 0, 0.85);
 }
 
-/* Responsive styles */
 @media (max-width: 576px) {
-  .login-container {
+  .login-wrapper {
     padding: 16px;
   }
-
+  
   .login-header h1 {
     font-size: 24px;
-  }
-
-  .login-header p {
-    font-size: 13px;
-  }
-
-  .login-card {
-    padding: 16px;
   }
 }

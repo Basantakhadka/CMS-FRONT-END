@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Layout, Menu, Button, theme, Dropdown, Avatar } from 'antd';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
+import { Layout, Menu, Button, theme, Dropdown, Avatar, Spin } from 'antd';
 import type { MenuProps } from 'antd';
 import {
   MenuFoldOutlined,
@@ -8,13 +8,18 @@ import {
   UserOutlined,
   SettingOutlined,
   LogoutOutlined,
+  SecurityScanOutlined,
+  SafetyOutlined,
+  TeamOutlined,
 } from '@ant-design/icons';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import Dashboard from '../../pages/Dashboard';
-import Users from '../../pages/Users';
-import Settings from '../../pages/Settings';
 import './MainLayout.css';
+
+// Lazy load module routes
+const DashboardRoutes = lazy(() => import('../../pages/Dashboard'));
+const IdentityAccessRoutes = lazy(() => import('../../pages/IdentityAccess'));
+const SettingsRoutes = lazy(() => import('../../pages/Settings'));
 
 const { Header, Sider, Content } = Layout;
 
@@ -50,9 +55,26 @@ const MainLayout: React.FC = () => {
       label: 'Dashboard',
     },
     {
-      key: '/users',
-      icon: <UserOutlined />,
-      label: 'Users',
+      key: 'identity-access',
+      icon: <SecurityScanOutlined />,
+      label: 'Identity & Access',
+      children: [
+        {
+          key: '/iam/general',
+          icon: <SafetyOutlined />,
+          label: 'General',
+        },
+        {
+          key: '/iam/users',
+          icon: <UserOutlined />,
+          label: 'Users',
+        },
+        {
+          key: '/iam/roles',
+          icon: <TeamOutlined />,
+          label: 'Roles',
+        },
+      ],
     },
     {
       key: '/settings',
@@ -63,7 +85,7 @@ const MainLayout: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/auth/login');
   };
 
   const userMenuItems: MenuProps['items'] = [
@@ -99,40 +121,77 @@ const MainLayout: React.FC = () => {
         collapsed={collapsed}
         breakpoint="lg"
         collapsedWidth={isMobile ? 0 : 80}
+        width={280}
         className={`layout-sider ${isMobile && !collapsed ? 'mobile-sider-open' : ''}`}
         style={{
-          overflow: 'auto',
+          overflow: 'hidden',
           height: '100vh',
-          position: isMobile ? 'fixed' : 'relative',
+          position: 'fixed',
           left: 0,
           top: 0,
           bottom: 0,
-          zIndex: isMobile ? 999 : 1,
+          zIndex: isMobile ? 999 : 100,
+          background: 'linear-gradient(180deg, #1a1f3a 0%, #2d3561 50%, #1a1f3a 100%)',
+          boxShadow: '4px 0 20px rgba(0, 0, 0, 0.3)',
         }}
       >
-        <div
-          style={{
-            height: 64,
-            margin: 16,
-            background: 'rgba(255, 255, 255, 0.2)',
-            borderRadius: '6px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontSize: '18px',
-            fontWeight: 600,
-          }}
-        >
-          {collapsed ? 'CMS' : 'CMS System'}
+        <div style={{ 
+          height: '100%', 
+          display: 'flex', 
+          flexDirection: 'column' 
+        }}>
+          <div
+            style={{
+              height: 70,
+              margin: '20px 16px',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '20px',
+              fontWeight: 700,
+              letterSpacing: '1px',
+              boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
+              transition: 'all 0.3s ease',
+              flexShrink: 0,
+            }}
+          >
+            {collapsed ? 'CMS' : 'CMS System'}
+          </div>
+          <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', minHeight: 0 }}>
+            <Menu
+              theme="dark"
+              mode="inline"
+              selectedKeys={[location.pathname]}
+              items={menuItems}
+              onClick={handleMenuClick}
+            />
+          </div>
+          {/* Sidebar Footer */}
+          <div
+            style={{
+              padding: collapsed ? '12px 8px' : '16px',
+              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+              background: 'rgba(0, 0, 0, 0.2)',
+              color: 'rgba(255, 255, 255, 0.65)',
+              fontSize: '12px',
+              textAlign: 'center',
+              flexShrink: 0,
+            }}
+          >
+            {!collapsed && (
+              <>
+                <div style={{ fontWeight: 600, marginBottom: '4px', color: 'rgba(255, 255, 255, 0.85)' }}>
+                  CMS v1.0.0
+                </div>
+                <div>© 2026 All rights reserved</div>
+              </>
+            )}
+            {collapsed && <div style={{ fontSize: '10px' }}>v1.0</div>}
+          </div>
         </div>
-        <Menu
-          theme="dark"
-          mode="inline"
-          selectedKeys={[location.pathname]}
-          items={menuItems}
-          onClick={handleMenuClick}
-        />
       </Sider>
       
       {/* Mobile overlay */}
@@ -143,7 +202,7 @@ const MainLayout: React.FC = () => {
         />
       )}
       
-      <Layout>
+      <Layout style={{ marginLeft: isMobile ? 0 : (collapsed ? 80 : 280), transition: 'margin-left 0.2s' }}>
         <Header
           style={{
             padding: '0 16px',
@@ -152,6 +211,12 @@ const MainLayout: React.FC = () => {
             alignItems: 'center',
             justifyContent: 'space-between',
             boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            position: 'fixed',
+            top: 0,
+            right: 0,
+            left: isMobile ? 0 : (collapsed ? 80 : 280),
+            zIndex: 99,
+            transition: 'left 0.2s',
           }}
         >
           <Button
@@ -175,20 +240,27 @@ const MainLayout: React.FC = () => {
         <Content
           className="layout-content"
           style={{
-            margin: '24px 16px',
+            margin: '88px 16px 24px 16px',
             padding: 24,
-            minHeight: 280,
+            minHeight: 'calc(100vh - 112px)',
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
-            overflow: 'auto',
           }}
         >
-          <Routes>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/" element={<Dashboard />} />
-          </Routes>
+          <Suspense 
+            fallback={
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
+                <Spin size="large" tip="Loading..." />
+              </div>
+            }
+          >
+            <Routes>
+              <Route path="/dashboard/*" element={<DashboardRoutes />} />
+              <Route path="/iam/*" element={<IdentityAccessRoutes />} />
+              <Route path="/settings/*" element={<SettingsRoutes />} />
+              <Route path="/" element={<DashboardRoutes />} />
+            </Routes>
+          </Suspense>
         </Content>
       </Layout>
     </Layout>
