@@ -170,7 +170,7 @@ const MainLayout: React.FC = () => {
               flexShrink: 0,
             }}
           >
-            {collapsed ? 'CMS' : 'CMS System'}
+            {collapsed ? 'CMS' : 'ClauseHQ'}
           </div>
           <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', minHeight: 0 }}>
             <Menu
@@ -196,7 +196,7 @@ const MainLayout: React.FC = () => {
             {!collapsed && (
               <>
                 <div style={{ fontWeight: 600, marginBottom: '4px', color: 'rgba(255, 255, 255, 0.85)' }}>
-                  CMS v1.0.0
+                  ClauseHQ v1.0.0
                 </div>
                 <div>© 2026 All rights reserved</div>
               </>

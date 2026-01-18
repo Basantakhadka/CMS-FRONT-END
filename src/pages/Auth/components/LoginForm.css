@@ -1,0 +1,142 @@
+/* Reset everything */
+html, body, #root {
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 100% !important;
+  width: 100% !important;
+}
+
+.login-page-container {
+  display: block; /* Switch from flex to block to use positioning */
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+}
+
+/* LEFT SIDE - Forced Full Screen */
+.side-visual {
+  position: fixed; /* Bypasses flex bugs */
+  top: 0;
+  left: 0;
+  width: 70%;
+  height: 100vh;
+  background-color: #001529;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.side-visual::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: url('login.jpeg');
+  background-size: cover;
+  background-position: center 35%; 
+  filter: blur(0px) brightness(0.6);
+  z-index: -1;
+}
+
+.visual-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 0;
+}
+
+.visual-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  padding: 40px;
+}
+
+.brand-title {
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 800;
+  margin: 0;
+  color: #fff;
+}
+
+.brand-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+/* RIGHT SIDE */
+.side-form {
+  margin-left: 70%; /* Pushes form to the right of the fixed visual */
+  width: 30%;
+  height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Pins footer to bottom */
+  padding: 60px 40px 30px 40px;
+  box-sizing: border-box;
+  z-index: 10;
+  position: relative;
+  padding-top: 180px;
+}
+
+.form-content-inner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main-logo {
+  /* Set a fixed width or height */
+  width: 500px;      /* Adjust this number to your preference */
+  height: 50px;       /* This maintains the aspect ratio so it doesn't stretch */
+  
+  /* Optional: Ensures the logo stays centered */
+  display: block;
+  object-fit: contain; 
+}
+
+.logo-area {
+  margin-bottom: 50px;
+  display: flex;
+  justify-content: center; /* Centers logo horizontally in the 30% panel */
+  width: 100%;
+}
+
+.actual-form-wrapper {
+  width: 100%;
+  max-width: none;
+
+}
+
+/* Spacing between link and button */
+.forgot-container {
+  text-align: right;
+  margin-bottom: 40px; /* Force distance */
+}
+
+.forgot-link {
+  color: #113c64;
+  font-size: 14px;
+}
+
+.login-btn {
+  height: 50px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  background-color: #221d5c;
+}
+
+.login-footer {
+  text-align: center;
+  width: 100%;
+}
+
+/* Responsive: Hide visual on mobile */
+@media (max-width: 1024px) {
+  .side-visual { display: none; }
+  .side-form { margin-left: 0; width: 100%; }
+}
