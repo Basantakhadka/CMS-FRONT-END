@@ -11,6 +11,7 @@ import {
   SecurityScanOutlined,
   SafetyOutlined,
   TeamOutlined,
+  AlertOutlined,
 } from '@ant-design/icons';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -20,6 +21,8 @@ import './MainLayout.css';
 const DashboardRoutes = lazy(() => import('../../pages/Dashboard'));
 const IdentityAccessRoutes = lazy(() => import('../../pages/IdentityAccess'));
 const SettingsRoutes = lazy(() => import('../../pages/Settings'));
+const AlertsRoutes = lazy(() => import('../../pages/Alerts'));
+
 
 const { Header, Sider, Content } = Layout;
 
@@ -76,11 +79,20 @@ const MainLayout: React.FC = () => {
         },
       ],
     },
+
+
+    {
+      key: '/alerts',
+      icon: <AlertOutlined />,
+      label: 'Alerts',
+    },
+
     {
       key: '/settings',
       icon: <SettingOutlined />,
       label: 'Settings',
-    },
+    }
+
   ];
 
   const handleLogout = () => {
@@ -258,6 +270,7 @@ const MainLayout: React.FC = () => {
               <Route path="/dashboard/*" element={<DashboardRoutes />} />
               <Route path="/iam/*" element={<IdentityAccessRoutes />} />
               <Route path="/settings/*" element={<SettingsRoutes />} />
+              <Route path="/alerts/*" element={<AlertsRoutes />} />
               <Route path="/" element={<DashboardRoutes />} />
             </Routes>
           </Suspense>
