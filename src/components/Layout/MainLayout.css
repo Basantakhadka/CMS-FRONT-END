@@ -3,93 +3,74 @@
   min-height: 100vh;
 }
 
+/* Sidebar Container */
 .layout-sider {
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .layout-sider .ant-menu-dark {
-  background: transparent;
+  background: transparent !important;
 }
 
-.layout-sider .ant-menu-item {
-  margin: 8px 12px;
-  border-radius: 10px;
-  height: 48px;
-  line-height: 48px;
-  transition: background 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
-  font-size: 15px;
-  font-weight: 500;
-}
-
-.layout-sider .ant-menu-item:hover {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%) !important;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-  color: #fff !important;
-}
-
-.layout-sider .ant-menu-item-selected {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
-  color: #fff !important;
-  font-weight: 600;
-}
-
-.layout-sider .ant-menu-item-selected::after {
-  border-right: none;
-}
-
+/* Base Menu Item */
+.layout-sider .ant-menu-item, 
 .layout-sider .ant-menu-submenu-title {
-  margin: 8px 12px;
-  border-radius: 10px;
-  height: 48px;
-  line-height: 48px;
-  transition: all 0.3s ease;
-  font-size: 1background 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
-  font-size: 15px;
-  font-weight: 500;
+  margin: 4px 12px !important;
+  border-radius: 6px !important;
+  color: rgba(255, 255, 255, 0.65) !important;
+  font-weight: 400;
+  transition: all 0.2s ease-in-out;
 }
 
+/* Hover State - Subtle Grey */
+.layout-sider .ant-menu-item:hover, 
 .layout-sider .ant-menu-submenu-title:hover {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%) !importanta(102, 126, 234, 0.3);
-  color: #fff !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
 }
 
-.layout-sider .ant-menu-submenu-open > .ant-menu-submenu-title {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%) !important;
-  color: #fff !important;
+/* Active/Selected State - Pure White Contrast */
+.layout-sider .ant-menu-item-selected {
+  background: #ffffff !important; /* White Background */
+  color: #000000 !important;      /* Black Text */
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
-.layout-sider .ant-menu-sub {
-  background: rgba(0, 0, 0, 0.2) !important;
-}
-
-.layout-sider .ant-menu-sub .ant-menu-item {
-  margin: 4px 8px;
-  padding-left: 48px !important;
-}
-
+/* Icon Styles */
 .layout-sider .ant-menu-item .anticon,
 .layout-sider .ant-menu-submenu-title .anticon {
   font-size: 18px;
-  transition: all 0.3s ease;
-}transform 0.2s ease;
+  color: inherit;
 }
 
-.layout-sider .ant-menu-item:hover .anticon,
-.layout-sider .ant-menu-submenu-title:hover .anticon {
-  transform: scale(1.1
-
-.sidebar-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.45);
-  z-index: 998;
+/* Selected Icon Color */
+.layout-sider .ant-menu-item-selected .anticon {
+  color: #000000 !important;
 }
 
+/* Submenu Adjustments */
+.layout-sider .ant-menu-sub {
+  background: rgba(255, 255, 255, 0.03) !important;
+  margin: 0 12px !important;
+  border-radius: 6px;
+}
+
+.layout-sider .ant-menu-inline .ant-menu-sub .ant-menu-item {
+  padding-left: 48px !important;
+  font-size: 13px;
+}
+
+/* Footer Copyright Area */
+.sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: #000;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
 .layout-content {
   transition: all 0.2s;
 }

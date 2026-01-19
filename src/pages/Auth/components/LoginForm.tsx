@@ -35,11 +35,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading }) => {
         <div className="form-content-inner">
           <div className="logo-area">
             {/* Replace with your actual logo path */}
-            <img 
+            {/* <img 
               src={logo} 
               alt="Logo" 
               className="main-logo" 
-            />
+            /> */}
+            <h1>ClauseHQ</h1>
           </div>
 
           <div className="actual-form-wrapper">

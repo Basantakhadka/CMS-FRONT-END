@@ -46,6 +46,7 @@ const MainLayout: React.FC = () => {
       }
     };
 
+
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -136,15 +137,14 @@ const MainLayout: React.FC = () => {
         width={280}
         className={`layout-sider ${isMobile && !collapsed ? 'mobile-sider-open' : ''}`}
         style={{
-          overflow: 'hidden',
-          height: '100vh',
-          position: 'fixed',
-          left: 0,
-          top: 0,
-          bottom: 0,
-          zIndex: isMobile ? 999 : 100,
-          background: 'linear-gradient(180deg, #1a1f3a 0%, #2d3561 50%, #1a1f3a 100%)',
-          boxShadow: '4px 0 20px rgba(0, 0, 0, 0.3)',
+           height: '100vh',
+           position: 'fixed',
+           left: 0,
+           top: 0,
+           bottom: 0,
+           zIndex: isMobile ? 999 : 100,
+           background: '#000000', // Solid Black Background
+           boxShadow: '1px 0 0 0 rgba(255, 255, 255, 0.1)', // Subtle vertical divider
         }}
       >
         <div style={{ 
@@ -154,20 +154,19 @@ const MainLayout: React.FC = () => {
         }}>
           <div
             style={{
-              height: 70,
-              margin: '20px 16px',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              borderRadius: '12px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontSize: '20px',
-              fontWeight: 700,
-              letterSpacing: '1px',
-              boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
-              transition: 'all 0.3s ease',
-              flexShrink: 0,
+             height: 60,
+             margin: '24px 16px',
+             background: '#ffffff', // White Logo Box
+             borderRadius: '4px',    // Sharper corners for legal feel
+             display: 'flex',
+             alignItems: 'center',
+             justifyContent: 'center',
+             color: '#000000',      // Black Text
+             fontSize: '18px',
+             fontWeight: 800,
+             letterSpacing: '2px',
+             transition: 'all 0.3s ease',
+             flexShrink: 0,
             }}
           >
             {collapsed ? 'CMS' : 'ClauseHQ'}
