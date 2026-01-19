@@ -32,7 +32,7 @@ html, body, #root {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background-image: url('login.jpeg');
+  background-image: url('kf.jpg');
   background-size: cover;
   background-position: center 35%; 
   filter: blur(0px) brightness(0.6);
@@ -89,9 +89,11 @@ html, body, #root {
   align-items: center;
 }
 
+
 .main-logo {
   /* Set a fixed width or height */
-  width: 500px;      /* Adjust this number to your preference */
+  width: 100%;   
+    /* Adjust this number to your preference */
   height: 50px;       /* This maintains the aspect ratio so it doesn't stretch */
   
   /* Optional: Ensures the logo stays centered */
@@ -104,6 +106,7 @@ html, body, #root {
   display: flex;
   justify-content: center; /* Centers logo horizontally in the 30% panel */
   width: 100%;
+
 }
 
 .actual-form-wrapper {
@@ -127,7 +130,11 @@ html, body, #root {
   height: 50px !important;
   font-weight: 600 !important;
   border-radius: 8px !important;
-  background-color: #221d5c;
+  background-color: #02020c;
+}
+
+.login-btn:hover {
+  background-color: #424343 !important;
 }
 
 .login-footer {
