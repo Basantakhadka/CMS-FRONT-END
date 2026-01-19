@@ -15,7 +15,7 @@ function App() {
       theme={{
         token: {
           fontFamily: "'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-          colorPrimary: '#1890ff',
+          colorPrimary: '#0c0d0e',
           borderRadius: 6,
         },
       }}
