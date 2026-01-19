@@ -12,6 +12,7 @@ import {
   SafetyOutlined,
   TeamOutlined,
   AlertOutlined,
+  FileTextOutlined,
 } from '@ant-design/icons';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -22,6 +23,7 @@ const DashboardRoutes = lazy(() => import('../../pages/Dashboard'));
 const IdentityAccessRoutes = lazy(() => import('../../pages/IdentityAccess'));
 const SettingsRoutes = lazy(() => import('../../pages/Settings'));
 const AlertsRoutes = lazy(() => import('../../pages/Alerts'));
+const ContractsView = lazy(() => import('../../pages/Contracts'));
 
 
 const { Header, Sider, Content } = Layout;
@@ -58,6 +60,13 @@ const MainLayout: React.FC = () => {
       icon: <DashboardOutlined />,
       label: 'Dashboard',
     },
+
+    {
+      key: '/contracts',
+      icon: <FileTextOutlined />,
+      label: 'Contracts',
+    },
+
     {
       key: 'identity-access',
       icon: <SecurityScanOutlined />,
@@ -156,20 +165,26 @@ const MainLayout: React.FC = () => {
             style={{
              height: 60,
              margin: '24px 16px',
-             background: '#ffffff', // White Logo Box
-             borderRadius: '4px',    // Sharper corners for legal feel
              display: 'flex',
              alignItems: 'center',
              justifyContent: 'center',
-             color: '#000000',      // Black Text
-             fontSize: '18px',
-             fontWeight: 800,
-             letterSpacing: '2px',
              transition: 'all 0.3s ease',
              flexShrink: 0,
             }}
           >
-            {collapsed ? 'CMS' : 'ClauseHQ'}
+            {collapsed ? (
+              <img 
+                src="/unnamed.jpg" 
+                alt="Logo" 
+                style={{ height: '40px', width: 'auto' }} 
+              />
+            ) : (
+              <img 
+                src="/unnamed.jpg" 
+                alt="Logo" 
+                style={{ height: '50px', width: 'auto' }} 
+              />
+            )}
           </div>
           <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', minHeight: 0 }}>
             <Menu
@@ -267,6 +282,7 @@ const MainLayout: React.FC = () => {
           >
             <Routes>
               <Route path="/dashboard/*" element={<DashboardRoutes />} />
+              <Route path="/contracts/*" element={<ContractsView />} />
               <Route path="/iam/*" element={<IdentityAccessRoutes />} />
               <Route path="/settings/*" element={<SettingsRoutes />} />
               <Route path="/alerts/*" element={<AlertsRoutes />} />
