@@ -12,6 +12,7 @@ import {
   SafetyOutlined,
   TeamOutlined,
   AlertOutlined,
+  FileTextOutlined,
 } from '@ant-design/icons';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -22,6 +23,7 @@ const DashboardRoutes = lazy(() => import('../../pages/Dashboard'));
 const IdentityAccessRoutes = lazy(() => import('../../pages/IdentityAccess'));
 const SettingsRoutes = lazy(() => import('../../pages/Settings'));
 const AlertsRoutes = lazy(() => import('../../pages/Alerts'));
+const ContractsView = lazy(() => import('../../pages/Contracts'));
 
 
 const { Header, Sider, Content } = Layout;
@@ -58,6 +60,13 @@ const MainLayout: React.FC = () => {
       icon: <DashboardOutlined />,
       label: 'Dashboard',
     },
+
+    {
+      key: '/contracts',
+      icon: <FileTextOutlined />,
+      label: 'Contracts',
+    },
+
     {
       key: 'identity-access',
       icon: <SecurityScanOutlined />,
@@ -273,6 +282,7 @@ const MainLayout: React.FC = () => {
           >
             <Routes>
               <Route path="/dashboard/*" element={<DashboardRoutes />} />
+              <Route path="/contracts/*" element={<ContractsView />} />
               <Route path="/iam/*" element={<IdentityAccessRoutes />} />
               <Route path="/settings/*" element={<SettingsRoutes />} />
               <Route path="/alerts/*" element={<AlertsRoutes />} />
