@@ -11,6 +11,7 @@ import {
   SecurityScanOutlined,
   SafetyOutlined,
   TeamOutlined,
+  AlertOutlined,
 } from '@ant-design/icons';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -20,6 +21,8 @@ import './MainLayout.css';
 const DashboardRoutes = lazy(() => import('../../pages/Dashboard'));
 const IdentityAccessRoutes = lazy(() => import('../../pages/IdentityAccess'));
 const SettingsRoutes = lazy(() => import('../../pages/Settings'));
+const AlertsRoutes = lazy(() => import('../../pages/Alerts'));
+
 
 const { Header, Sider, Content } = Layout;
 
@@ -42,6 +45,7 @@ const MainLayout: React.FC = () => {
         setCollapsed(true);
       }
     };
+
 
     handleResize();
     window.addEventListener('resize', handleResize);
@@ -76,11 +80,20 @@ const MainLayout: React.FC = () => {
         },
       ],
     },
+
+
+    {
+      key: '/alerts',
+      icon: <AlertOutlined />,
+      label: 'Alerts',
+    },
+
     {
       key: '/settings',
       icon: <SettingOutlined />,
       label: 'Settings',
-    },
+    }
+
   ];
 
   const handleLogout = () => {
@@ -124,15 +137,14 @@ const MainLayout: React.FC = () => {
         width={280}
         className={`layout-sider ${isMobile && !collapsed ? 'mobile-sider-open' : ''}`}
         style={{
-          overflow: 'hidden',
-          height: '100vh',
-          position: 'fixed',
-          left: 0,
-          top: 0,
-          bottom: 0,
-          zIndex: isMobile ? 999 : 100,
-          background: 'linear-gradient(180deg, #1a1f3a 0%, #2d3561 50%, #1a1f3a 100%)',
-          boxShadow: '4px 0 20px rgba(0, 0, 0, 0.3)',
+           height: '100vh',
+           position: 'fixed',
+           left: 0,
+           top: 0,
+           bottom: 0,
+           zIndex: isMobile ? 999 : 100,
+           background: '#000000', // Solid Black Background
+           boxShadow: '1px 0 0 0 rgba(255, 255, 255, 0.1)', // Subtle vertical divider
         }}
       >
         <div style={{ 
@@ -142,23 +154,28 @@ const MainLayout: React.FC = () => {
         }}>
           <div
             style={{
-              height: 70,
-              margin: '20px 16px',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              borderRadius: '12px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontSize: '20px',
-              fontWeight: 700,
-              letterSpacing: '1px',
-              boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
-              transition: 'all 0.3s ease',
-              flexShrink: 0,
+             height: 60,
+             margin: '24px 16px',
+             display: 'flex',
+             alignItems: 'center',
+             justifyContent: 'center',
+             transition: 'all 0.3s ease',
+             flexShrink: 0,
             }}
           >
-            {collapsed ? 'CMS' : 'CMS System'}
+            {collapsed ? (
+              <img 
+                src="/unnamed.jpg" 
+                alt="Logo" 
+                style={{ height: '40px', width: 'auto' }} 
+              />
+            ) : (
+              <img 
+                src="/unnamed.jpg" 
+                alt="Logo" 
+                style={{ height: '50px', width: 'auto' }} 
+              />
+            )}
           </div>
           <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', minHeight: 0 }}>
             <Menu
@@ -184,7 +201,7 @@ const MainLayout: React.FC = () => {
             {!collapsed && (
               <>
                 <div style={{ fontWeight: 600, marginBottom: '4px', color: 'rgba(255, 255, 255, 0.85)' }}>
-                  CMS v1.0.0
+                  ClauseHQ v1.0.0
                 </div>
                 <div>© 2026 All rights reserved</div>
               </>
@@ -258,6 +275,7 @@ const MainLayout: React.FC = () => {
               <Route path="/dashboard/*" element={<DashboardRoutes />} />
               <Route path="/iam/*" element={<IdentityAccessRoutes />} />
               <Route path="/settings/*" element={<SettingsRoutes />} />
+              <Route path="/alerts/*" element={<AlertsRoutes />} />
               <Route path="/" element={<DashboardRoutes />} />
             </Routes>
           </Suspense>

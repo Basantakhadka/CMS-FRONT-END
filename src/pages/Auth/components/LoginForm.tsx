@@ -1,6 +1,10 @@
 import React from 'react';
-import { Form, Input, Button, Card } from 'antd';
+import { Form, Input, Button, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import './LoginForm.css';
+import logo from '../../../assets/login1.webp';
+
+const { Text } = Typography;
 
 interface LoginFormValues {
   username: string;
@@ -14,62 +18,76 @@ interface LoginFormProps {
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading }) => {
   return (
-    <div className="login-container">
-      <div className="login-wrapper">
-        <Card className="login-card">
-          <div className="login-header">
-            <h1>CMS System</h1>
-            <p>Welcome back! Please login to your account.</p>
+    <div className="login-page-container">
+      {/* LEFT SECTION - Fixed Position */}
+      <div className="side-visual">
+        <div className="visual-overlay" />
+        <div className="visual-content">
+          <h1 className="brand-title">ClauseHQ</h1>
+          <p className="brand-subtitle">
+            Advanced Contract Management for Nepal's Legal Professionals.
+          </p>
+        </div>
+      </div>
+
+      {/* RIGHT SECTION - Scrollable/Flex Column */}
+      <div className="side-form">
+        <div className="form-content-inner">
+          <div className="logo-area">
+            {/* Replace with your actual logo path */}
+            {/* <img 
+              src={logo} 
+              alt="Logo" 
+              className="main-logo" 
+            /> */}
+            <h1>ClauseHQ</h1>
           </div>
-          <Form
-            name="login"
-            onFinish={onSubmit}
-            autoComplete="off"
-            layout="vertical"
-            size="large"
-          >
-            <Form.Item
-              name="username"
-              rules={[
-                { required: true, message: 'Please input your username!' },
-              ]}
-            >
-              <Input
-                prefix={<UserOutlined />}
-                placeholder="Username"
-              />
-            </Form.Item>
 
-            <Form.Item
-              name="password"
-              rules={[
-                { required: true, message: 'Please input your password!' },
-              ]}
+          <div className="actual-form-wrapper">
+            <Form
+              name="login"
+              onFinish={onSubmit}
+              layout="vertical"
+              size="large"
             >
-              <Input.Password
-                prefix={<LockOutlined />}
-                placeholder="Password"
-              />
-            </Form.Item>
-
-            <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                block
-                loading={loading}
+              <Form.Item
+                name="username"
+                rules={[{ required: true, message: 'Please input username!' }]}
               >
-                Log In
-              </Button>
-            </Form.Item>
+                <Input prefix={<UserOutlined />} placeholder="Username" />
+              </Form.Item>
 
-            <div className="login-info">
-              <p>Demo credentials:</p>
-              <p><strong>Username:</strong> admin</p>
-              <p><strong>Password:</strong> admin123</p>
-            </div>
-          </Form>
-        </Card>
+              <Form.Item
+                name="password"
+                rules={[{ required: true, message: 'Please input password!' }]}
+              >
+                <Input.Password prefix={<LockOutlined />} placeholder="Password" />
+              </Form.Item>
+
+              <div className="forgot-container">
+                <a href="#forgot" className="forgot-link">Forgot password?</a>
+              </div>
+
+              <Form.Item>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  block
+                  loading={loading}
+                  className="login-btn"
+                >
+                  Log In
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
+        </div>
+
+        <div className="login-footer">
+          <Text type="secondary">
+            © {new Date().getFullYear()} ClauseHQ.
+          </Text>
+        </div>
       </div>
     </div>
   );
