@@ -156,20 +156,26 @@ const MainLayout: React.FC = () => {
             style={{
              height: 60,
              margin: '24px 16px',
-             background: '#ffffff', // White Logo Box
-             borderRadius: '4px',    // Sharper corners for legal feel
              display: 'flex',
              alignItems: 'center',
              justifyContent: 'center',
-             color: '#000000',      // Black Text
-             fontSize: '18px',
-             fontWeight: 800,
-             letterSpacing: '2px',
              transition: 'all 0.3s ease',
              flexShrink: 0,
             }}
           >
-            {collapsed ? 'CMS' : 'ClauseHQ'}
+            {collapsed ? (
+              <img 
+                src="/unnamed.jpg" 
+                alt="Logo" 
+                style={{ height: '40px', width: 'auto' }} 
+              />
+            ) : (
+              <img 
+                src="/unnamed.jpg" 
+                alt="Logo" 
+                style={{ height: '50px', width: 'auto' }} 
+              />
+            )}
           </div>
           <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', minHeight: 0 }}>
             <Menu
