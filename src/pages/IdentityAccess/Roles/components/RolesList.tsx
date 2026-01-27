@@ -2,17 +2,16 @@ import React from 'react';
 import { Table, Button, Space, Tag, Popconfirm, Input, Tooltip } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, UserAddOutlined } from '@ant-design/icons';
 import type { Role } from '../../../../store/slices/rolesSlice';
-import type { ColumnsType } from 'antd/es/table';
 
 interface RolesListProps {
-  roles: Role[];
+  roles: any;
   loading: boolean;
   pagination: {
-    total: number;
-    page: number;
-    pageSize: number;
+    current: number;
+    size: number;
+    sortMeta: string;
   };
-  onEdit: (role: Role) => void;
+  onEdit: (id: string) => void;
   onDelete: (roleId: string) => void;
   onCreate: () => void;
   onAssignUsers: (role: Role) => void;
@@ -27,84 +26,63 @@ const RolesList: React.FC<RolesListProps> = ({
   onEdit,
   onDelete,
   onCreate,
-  onAssignUsers,
   onPageChange,
   onSearch,
 }) => {
-  const columns: ColumnsType<Role> = [
+  const columns = [
+    {
+      title: 'SN',
+      key: 'sn',
+      render: (_text: any, _record: any, index: number) => index + 1,
+    },
     {
       title: 'Role Name',
-      dataIndex: 'name',
-      key: 'name',
-      render: (name: string, record) => (
-        <>
-          {name}
-          {record.isSystem && (
-            <Tag color="purple" style={{ marginLeft: 8 }}>
-              SYSTEM
-            </Tag>
-          )}
-        </>
-      ),
+      dataIndex: 'title',
+      key: 'title',
     },
     {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-      ellipsis: true,
-    },
-    {
-      title: 'Permissions',
-      dataIndex: 'permissions',
-      key: 'permissions',
-      render: (permissions: any[]) => (
-        <Tag color="blue">{permissions.length} permissions</Tag>
-      ),
-    },
-    {
-      title: 'Users',
-      dataIndex: 'userCount',
-      key: 'userCount',
-      render: (count: number) => <Tag color="green">{count} users</Tag>,
-    },
-    {
-      title: 'Created',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
+      title: 'Created On',
+      dataIndex: 'createdOn',
+      key: 'createdOn',
       render: (date: string) => new Date(date).toLocaleDateString(),
+    },
+    {
+      title: 'Last Modified',
+      dataIndex: 'lastModifiedOn',
+      key: 'lastModifiedOn',
+      render: (date: string) => new Date(date).toLocaleDateString(),
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status: string) => {
+        const color = status === 'Active' ? 'green' : status === 'Inactive' ? 'orange' : 'red';
+        return <Tag color={color}>{status.toUpperCase()}</Tag>;
+      },
     },
     {
       title: 'Actions',
       key: 'actions',
-      render: (_, record) => (
+      render: (_: any, record: any) => (
         <Space>
           <Tooltip title="Edit Role">
             <Button
               type="link"
               icon={<EditOutlined />}
-              onClick={() => onEdit(record)}
-              disabled={record.isSystem}
+              onClick={() => onEdit(record?.id)}
             />
           </Tooltip>
-          <Tooltip title="Assign Users">
-            <Button
-              type="link"
-              icon={<UserAddOutlined />}
-              onClick={() => onAssignUsers(record)}
-            />
-          </Tooltip>
-          {!record.isSystem && (
-            <Popconfirm
-              title="Are you sure you want to delete this role?"
-              onConfirm={() => onDelete(record.id)}
-              okText="Yes"
-              cancelText="No"
-            >
-              <Tooltip title="Delete Role">
-                <Button type="link" danger icon={<DeleteOutlined />} />
-              </Tooltip>
-            </Popconfirm>
-          )}
+          <Popconfirm
+            title="Are you sure you want to delete this role?"
+            onConfirm={() => onDelete(record.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Tooltip title="Delete Role">
+              <Button type="link" danger icon={<DeleteOutlined />} />
+            </Tooltip>
+          </Popconfirm>
         </Space>
       ),
     },
@@ -126,13 +104,12 @@ const RolesList: React.FC<RolesListProps> = ({
       </div>
       <Table
         columns={columns}
-        dataSource={roles}
+        dataSource={roles?.list}
         loading={loading}
         rowKey="id"
         pagination={{
-          current: pagination.page,
-          pageSize: pagination.pageSize,
-          total: pagination.total,
+          current: pagination.current,
+          pageSize: pagination.size,
           showSizeChanger: true,
           showTotal: (total) => `Total ${total} roles`,
           onChange: onPageChange,

@@ -5,14 +5,14 @@ import type { User } from '../../../../store/slices/usersSlice';
 import type { ColumnsType } from 'antd/es/table';
 
 interface UsersListProps {
-  users: User[];
+  users: any;
   loading: boolean;
   pagination: {
-    total: number;
-    page: number;
-    pageSize: number;
+    current: number;
+    sortMeta: string;
+    size: number;
   };
-  onEdit: (user: User) => void;
+  onEdit: (user: User) => any;
   onDelete: (userId: string) => void;
   onCreate: () => void;
   onPageChange: (page: number, pageSize: number) => void;
@@ -29,21 +29,38 @@ const UsersList: React.FC<UsersListProps> = ({
   onPageChange,
   onSearch,
 }) => {
+
+
+  interface User {
+    id: string;
+    userName: string;
+    employeeId: string;
+    userId: string;
+    createdOn: string;
+    status: 'Enabled' | 'Disabled' | 'Suspended';
+  }
+
   const columns: ColumnsType<User> = [
     {
+      title: 'SN',
+      key: 'sn',
+      render: (_text, _record, index) => index + 1, // index starts from 0
+    },
+
+    {
       title: 'Username',
-      dataIndex: 'username',
-      key: 'username',
+      dataIndex: 'userName',
+      key: 'userName',
     },
     {
       title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
+      dataIndex: 'userId',
+      key: 'userId',
     },
     {
-      title: 'Full Name',
-      key: 'fullName',
-      render: (_, record) => `${record.firstName} ${record.lastName}`,
+      title: 'Employee ID',
+      dataIndex: 'employeeId',
+      key: 'employeeId',
     },
     {
       title: 'Status',
@@ -51,35 +68,20 @@ const UsersList: React.FC<UsersListProps> = ({
       key: 'status',
       render: (status: string) => {
         const color =
-          status === 'active' ? 'green' : status === 'inactive' ? 'orange' : 'red';
+          status === 'Enabled' ? 'green' : status === 'Disabled' ? 'orange' : 'red';
         return <Tag color={color}>{status.toUpperCase()}</Tag>;
       },
     },
     {
-      title: 'Roles',
-      dataIndex: 'roles',
-      key: 'roles',
-      render: (roles: string[]) => (
-        <>
-          {roles.map((role) => (
-            <Tag key={role} color="blue">
-              {role}
-            </Tag>
-          ))}
-        </>
-      ),
-    },
-    {
-      title: 'Last Login',
-      dataIndex: 'lastLogin',
-      key: 'lastLogin',
-      render: (lastLogin?: string) =>
-        lastLogin ? new Date(lastLogin).toLocaleString() : 'Never',
+      title: 'Created On',
+      dataIndex: 'createdOn',
+      key: 'createdOn',
+      render: (date: string) => new Date(date).toLocaleString(),
     },
     {
       title: 'Actions',
       key: 'actions',
-      render: (_, record) => (
+      render: (_, record: any) => (
         <Space>
           <Tooltip title="Edit User">
             <Button
@@ -103,6 +105,7 @@ const UsersList: React.FC<UsersListProps> = ({
     },
   ];
 
+
   return (
     <div>
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between' }}>
@@ -119,17 +122,19 @@ const UsersList: React.FC<UsersListProps> = ({
       </div>
       <Table
         columns={columns}
-        dataSource={users}
+        dataSource={users?.list}
         loading={loading}
         rowKey="id"
         pagination={{
-          current: pagination.page,
-          pageSize: pagination.pageSize,
-          total: pagination.total,
+          current: pagination.current,
+          pageSize: pagination.size,
+          // total: pagination.total,
           showSizeChanger: true,
           showTotal: (total) => `Total ${total} users`,
           onChange: onPageChange,
         }}
+
+
       />
     </div>
   );

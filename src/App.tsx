@@ -33,7 +33,8 @@ function App() {
               {/* Auth Routes */}
               <Route path="/auth/*" element={<AuthRoutes />} />
               <Route path="/login" element={<Navigate to="/auth/login" replace />} />
-              
+
+
               {/* Protected Routes - All app routes through MainLayout */}
               <Route
                 path="/*"
