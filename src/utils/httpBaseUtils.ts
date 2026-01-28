@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { BASE_URL, JWT_TOKEN, PERMISSION_KEY } from '../constants';
+import history from './history';
 
 import { clearLocalStorage, getLocalStorage, setLocalStorage } from './storageUtils';
 // import { setSessionTime, setSessionId } from '../features/slice/sessionSlice';
@@ -24,7 +25,6 @@ export function httpBase(isDownloadable: boolean = false, signal?: any) {
         responseType: isDownloadable ? 'blob' : 'json',
         signal: signal,
     });
-    console.log(api)
 
     api.interceptors.response.use(
         (response) => {
@@ -42,9 +42,11 @@ export function httpBase(isDownloadable: boolean = false, signal?: any) {
                     clearLocalStorage('id');
                     clearLocalStorage(PERMISSION_KEY);
                     // navigate('/');
+                    history.push('/')
                 }
                 if (error.response?.status === 503) {
-                    // navigate('/503');
+                    // navigate('/503');\
+                    history.push('/503')
                 }
             }
 

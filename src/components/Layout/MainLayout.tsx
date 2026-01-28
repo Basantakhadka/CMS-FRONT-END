@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { Layout, Menu, Button, theme, Dropdown, Avatar, Spin } from 'antd';
+import { Layout, Menu, Button, theme, Dropdown, Avatar, Spin, Typography } from 'antd';
 import type { MenuProps } from 'antd';
 import {
   MenuFoldOutlined,
@@ -169,7 +169,8 @@ const MainLayout: React.FC = () => {
              alignItems: 'center',
              justifyContent: 'center',
              transition: 'all 0.3s ease',
-             flexShrink: 0,
+              flexShrink: 0,
+              backgroundColor: collapsed ? 'transparent' : 'white',
             }}
           >
             {collapsed ? (
@@ -179,11 +180,10 @@ const MainLayout: React.FC = () => {
                 style={{ height: '40px', width: 'auto' }} 
               />
             ) : (
-              <img 
-                src="/unnamed.jpg" 
-                alt="Logo" 
-                style={{ height: '50px', width: 'auto' }} 
-              />
+
+                <Typography.Text strong style={{ fontSize: '26px', color: 'black' }}>
+                  ClauseHQ
+                </Typography.Text>
             )}
           </div>
           <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', minHeight: 0 }}>

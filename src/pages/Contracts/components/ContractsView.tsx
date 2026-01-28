@@ -27,6 +27,11 @@ const ContractsView: React.FC<ContractsViewProps> = ({
 }) => {
   const columns = [
     {
+      title: 'SN',
+      key: 'sn',
+      render: (_text: any, _record: any, index: number) => index + 1,
+    },
+    {
       title: 'Project Name',
       dataIndex: 'projectName',
       key: 'projectName',
@@ -56,10 +61,10 @@ const ContractsView: React.FC<ContractsViewProps> = ({
   ];
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div style={{ padding: '24px 24px 24px 0px ' }}>
       <Row justify="space-between" align="middle" style={{ marginBottom: 24 }}>
         <Col>
-          <Title level={2} style={{ margin: 0 }}>Contracts</Title>
+          <Title level={3} style={{ margin: 0 }}>Contracts</Title>
         </Col>
         <Col>
           <Button 

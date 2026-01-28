@@ -32,7 +32,14 @@ const PasswordPolicyForm: React.FC<PasswordPolicyFormProps> = ({
           name="minLength"
           rules={[{ required: true, message: 'Please enter minimum length' }]}
         >
-          <InputNumber min={6} max={32} style={{ width: '100%' }} />
+          <InputNumber min={6} max={15} style={{ width: '25%' }} />
+        </Form.Item>
+        <Form.Item
+          label="Maximum Length"
+          name="maxLength"
+          rules={[{ required: true, message: 'Please enter maximum length' }]}
+        >
+          <InputNumber min={6} max={15} style={{ width: '25%' }} />
         </Form.Item>
 
         <Form.Item
@@ -72,23 +79,14 @@ const PasswordPolicyForm: React.FC<PasswordPolicyFormProps> = ({
           name="expiryDays"
           rules={[{ required: true, message: 'Please enter expiry days' }]}
         >
-          <InputNumber min={0} max={365} style={{ width: '100%' }} />
+          <InputNumber min={0} max={365} style={{ width: '25%' }} />
         </Form.Item>
 
-        <Form.Item
-          label="Prevent Password Reuse (Last N passwords)"
-          name="preventReuse"
-          rules={[{ required: true, message: 'Please enter prevent reuse count' }]}
-        >
-          <InputNumber min={0} max={24} style={{ width: '100%' }} />
-        </Form.Item>
-
-        <Form.Item>
+        <Form.Item style={{ float: 'right' }}>
           <Space>
-            <Button type="primary" htmlType="submit" loading={loading}>
+            <Button type="primary" htmlType="submit" loading={loading} >
               Save Policy
             </Button>
-            <Button onClick={() => form.resetFields()}>Reset</Button>
           </Space>
         </Form.Item>
       </Form>
