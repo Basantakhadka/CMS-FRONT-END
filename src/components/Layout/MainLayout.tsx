@@ -23,7 +23,7 @@ const DashboardRoutes = lazy(() => import('../../pages/Dashboard'));
 const IdentityAccessRoutes = lazy(() => import('../../pages/IdentityAccess'));
 const SettingsRoutes = lazy(() => import('../../pages/Settings'));
 const AlertsRoutes = lazy(() => import('../../pages/Alerts'));
-const ContractsView = lazy(() => import('../../pages/Contracts'));
+const ContractsView = lazy(() => import('../../pages/Contracts_management_and _creation'));
 
 
 const { Header, Sider, Content } = Layout;
