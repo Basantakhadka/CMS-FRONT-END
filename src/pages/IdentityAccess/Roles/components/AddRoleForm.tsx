@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Form,
     Input,
@@ -26,8 +26,11 @@ interface AddRoleFormProps {
 }
 
 const AddRoleForm: React.FC<AddRoleFormProps> = ({ onSubmit, permissions, selectedRole }) => {
+    console.log({ selectedRole })
+    console.log(permissions)
     const [form] = Form.useForm();
     const [selectedPermissions, setSelectedPermissions] = useState<any>(selectedRole?.role?.permissions || []);
+    console.log({ selectedPermissions })
 
     // Toggle all permissions in a group
     const toggleGroup = (group: PermissionGroup) => {
@@ -58,6 +61,16 @@ const AddRoleForm: React.FC<AddRoleFormProps> = ({ onSubmit, permissions, select
         }
     };
 
+    useEffect(() => {
+        if (selectedRole) {
+            form.setFieldsValue({
+                title: selectedRole?.role?.title,
+            });
+            setSelectedPermissions(selectedRole?.role?.permissions || []);
+        }
+
+    }, [selectedRole, form]);
+
     return (
         <Form
             form={form}
@@ -67,7 +80,7 @@ const AddRoleForm: React.FC<AddRoleFormProps> = ({ onSubmit, permissions, select
             <Form.Item
                 label="Role Title"
                 name="title"
-                initialValue={selectedRole?.role?.title}
+                initialValue={selectedRole && selectedRole?.role?.title}
                 rules={[{ required: true, message: 'Please enter role name' }]}
                 style={{
                     width: "25%"
@@ -79,10 +92,10 @@ const AddRoleForm: React.FC<AddRoleFormProps> = ({ onSubmit, permissions, select
             <Form.Item label="Permissions" >
                 <Space direction="vertical" size="large" style={{ width: '100%' }}>
                     {permissions?.map((group: any) => {
-                        const groupKeys = group.children.map((c: any) => c.key);
-                        const allChecked = groupKeys.every((k: any) => selectedPermissions?.includes(k));
+                        const groupKeys = group?.children?.map((c: any) => c.key);
+                        const allChecked = groupKeys?.every((k: any) => selectedRole?.role?.permissions?.includes(k));
                         const someChecked =
-                            groupKeys.some((k: any) => selectedPermissions?.includes(k)) && !allChecked;
+                            groupKeys?.some((k: any) => selectedRole?.role?.permissions?.includes(k)) && !allChecked;
 
                         return (
                             <div key={group.key} style={{
@@ -104,7 +117,7 @@ const AddRoleForm: React.FC<AddRoleFormProps> = ({ onSubmit, permissions, select
 
                                 <div style={{ marginTop: 8, paddingLeft: 24 }}>
                                     <Checkbox.Group
-                                        value={selectedPermissions}
+                                        value={selectedRole?.role?.permissions}
                                         onChange={(values) =>
                                             setSelectedPermissions(values as string[])
                                         }

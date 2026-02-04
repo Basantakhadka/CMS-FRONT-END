@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import { ContractService } from '../../pages/Contracts_management_and _creation/services/ContractService';
-import type { Contract } from '../../pages/Contracts_management_and _creation/components/AddContract';
 export interface CreateContractPayload {
   title: string;               // Contract title
   type: string;                // Contract type
