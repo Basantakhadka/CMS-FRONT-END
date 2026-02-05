@@ -16,7 +16,7 @@ interface AlertsViewProps {
 
 const AlertsView: React.FC<AlertsViewProps> = ({ onFinish, initialData = null, contracts = [] }) => {
   const [form] = Form.useForm();
-  const {id}=useParams()
+  const { id } = useParams()
   const [selectedContract, setSelectedContract] = useState<string | null>(null);
   const [customReminder, setCustomReminder] = useState(false);
 
@@ -32,13 +32,13 @@ const AlertsView: React.FC<AlertsViewProps> = ({ onFinish, initialData = null, c
   };
 
 
-    useEffect(() => {
+  useEffect(() => {
     if (initialData) {
       form.setFieldsValue({
         ...initialData,
       });
       setSelectedContract(initialData.contractId);
-      setCustomReminder(initialData.enableCustom);  
+      setCustomReminder(initialData.enableCustom);
 
     }
   }, [initialData, form]);
@@ -52,7 +52,7 @@ const AlertsView: React.FC<AlertsViewProps> = ({ onFinish, initialData = null, c
           form={form}
           layout="vertical"
           onFinish={handleSave}
-         
+
           initialValues={initialData ? {
             ...initialData,
           } : {}}
@@ -61,12 +61,12 @@ const AlertsView: React.FC<AlertsViewProps> = ({ onFinish, initialData = null, c
           <Form.Item
             label="Select Contract"
             name="contractId"
-         
+
             rules={[{ required: true, message: 'Please select a contract' }]}
           >
             <Select
               placeholder="Select a contract"
-                  disabled={id ? true : false}
+              disabled={id ? true : false}
               onChange={(value) => setSelectedContract(value)}
             >
               {contracts?.data?.map((c: any) => (
@@ -122,10 +122,20 @@ const AlertsView: React.FC<AlertsViewProps> = ({ onFinish, initialData = null, c
 
               {/* Stakeholders */}
               <Form.Item
-                label="Stakeholders"
+                label="Stakeholder Email"
                 name="stakeholders"
+                rules={[
+                  {
+                    type: 'email',
+                    message: 'Please enter a valid email address'
+                  },
+                  {
+                    required: true,
+                    message: 'Email is required'
+                  },
+                ]}
               >
-                <Input placeholder="Enter stakeholders (comma separated)" />
+                <Input type="email" placeholder="Enter stakeholder email" />
               </Form.Item>
 
               <Divider />
@@ -137,7 +147,7 @@ const AlertsView: React.FC<AlertsViewProps> = ({ onFinish, initialData = null, c
                   htmlType="submit"
                   icon={<SaveOutlined />}
                 >
-                {  id ? 'Update Alert' : 'Save Alert'}
+                  {id ? 'Update Alert' : 'Save Alert'}
                 </Button>
               </Form.Item>
             </>
