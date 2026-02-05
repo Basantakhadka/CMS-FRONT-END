@@ -41,12 +41,11 @@ export function httpBase(isDownloadable: boolean = false, signal?: any) {
                     clearLocalStorage(JWT_TOKEN);
                     clearLocalStorage('id');
                     clearLocalStorage(PERMISSION_KEY);
-                    // navigate('/');
-                    history.push('/')
+                    window.location.href = '/login';
+                   
                 }
                 if (error.response?.status === 503) {
-                    // navigate('/503');\
-                    history.push('/503')
+                    window.location.href = '/503';
                 }
             }
 
