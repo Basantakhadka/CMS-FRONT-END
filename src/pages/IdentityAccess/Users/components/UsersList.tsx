@@ -37,6 +37,7 @@ const UsersList: React.FC<UsersListProps> = ({
     employeeId: string;
     userId: string;
     createdOn: string;
+    roles: any;
     status: 'Enabled' | 'Disabled' | 'Suspended';
   }
 
