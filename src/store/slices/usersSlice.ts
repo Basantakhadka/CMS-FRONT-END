@@ -14,7 +14,7 @@ export interface CreateUserPayload {
     userName: string;
     userId: string;
     employeeId: string,
-    roles: string[];
+    roles: any[];
     active: true;
 }
 
@@ -23,7 +23,7 @@ export interface UpdateUserPayload {
     userName?: string;
     userId?: string;
     employeeId: string;
-    roles?: string[];
+    roles?: any[];
     acrive: true;
 }
 

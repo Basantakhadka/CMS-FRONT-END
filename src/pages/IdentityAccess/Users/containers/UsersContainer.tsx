@@ -27,9 +27,12 @@ const UsersContainer: React.FC = () => {
   const handleCreate = () => {
     setSelectedUser(null);
     setModalVisible(true);
+
+
   };
 
   const handleEdit = (user: User) => {
+    console.log('Editing user:', user); 
     setSelectedUser(user);
     setModalVisible(true);
   };
@@ -46,31 +49,46 @@ const UsersContainer: React.FC = () => {
     }
   };
 
+  const mapRolesWithLabelValue = (
+    roleIds: any,
+    rolesData: any
+  ) => {
+    return roleIds?.map((roleId:any) => {
+      const role = rolesData?.data?.find((r:any) => r.value === roleId);
+      return {
+        label: role?.label ?? "",
+        value: roleId,
+      };
+    });
+  };
   const handleSubmit = async (values: CreateUserPayload | UpdateUserPayload) => {
     try {
-      console.log('Dispatching updateUser with:', values);
+      const payload = {
+        ...values,
+        roles: mapRolesWithLabelValue(values?.roles, roles?.data),
+      };
       if ('id' in values) {
-        const result = await dispatch(updateUser(values as UpdateUserPayload)).unwrap();
-        console.log('Update result:', result);
+        await dispatch(
+          updateUser(payload as UpdateUserPayload)
+        ).unwrap();
+
         message.success('User updated successfully');
-        setModalVisible(false);
-        setSelectedUser(null);
-        setReload(prev => !prev);
-        return
       } else {
-        const result = await dispatch(createUser(values as CreateUserPayload)).unwrap();
-        console.log('Create result:', result);
+        await dispatch(
+          createUser(payload as CreateUserPayload)
+        ).unwrap();
+
         message.success('User created successfully');
-        setModalVisible(false);
-        setSelectedUser(null);
-        setReload(prev => !prev);
-        return
       }
 
+      setModalVisible(false);
+      setSelectedUser(null);
+      setReload(prev => !prev);
+
     } catch (err) {
-      console.error('Caught error:', err);
-      message.error(`Failed to ${ selectedUser ? 'update' : 'create' } user`);
+      message.error(`Failed to ${selectedUser ? 'update' : 'create'} user`);
     }
+
   };
 
   const handlePageChange = (page: number, pageSize: number) => {
