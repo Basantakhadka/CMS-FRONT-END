@@ -55,7 +55,8 @@ const AlertsView: React.FC<AlertsViewProps> = ({ onFinish, initialData = null, c
 
           initialValues={initialData ? {
             ...initialData,
-          } : {}}
+  
+          } : {  reminderInterval: initialData?.reminderInterval ? initialData.reminderInterval : 30,}}
         >
           {/* Select Contract */}
           <Form.Item
@@ -105,6 +106,7 @@ const AlertsView: React.FC<AlertsViewProps> = ({ onFinish, initialData = null, c
                 label="Reminder Interval (days)"
                 name="reminderInterval"
                 rules={[{ required: customReminder, message: 'Please enter interval' }]}
+            
               >
                 <Input
                   type="number"
@@ -122,22 +124,35 @@ const AlertsView: React.FC<AlertsViewProps> = ({ onFinish, initialData = null, c
 
               {/* Stakeholders */}
               <Form.Item
-                label="Stakeholder Email"
+                label="Stakeholder Emails"
                 name="stakeholders"
                 rules={[
                   {
-                    type: 'email',
-                    message: 'Please enter a valid email address'
+                    required: true,
+                    message: "At least one email is required",
                   },
                   {
-                    required: true,
-                    message: 'Email is required'
+                    validator: (_, value) => {
+                      if (!value || value.length === 0) return Promise.resolve();
+
+                      const invalid = value.find(
+                        (email: string) =>
+                          !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)
+                      );
+
+                      return invalid
+                        ? Promise.reject(new Error(`Invalid email: ${invalid}`))
+                        : Promise.resolve();
+                    },
                   },
                 ]}
               >
-                <Input type="email" placeholder="Enter stakeholder email" />
+                <Select
+                  mode="tags"
+                  placeholder="Enter emails and press enter"
+                  tokenSeparators={[",", " "]}
+                />
               </Form.Item>
-
               <Divider />
 
               <Form.Item style={{ float: 'right' }}>

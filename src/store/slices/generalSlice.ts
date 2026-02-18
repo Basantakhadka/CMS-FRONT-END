@@ -2,13 +2,13 @@ import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/tool
 import { generalService } from '../../pages/IdentityAccess/General/services/generalService';
 
 export interface PasswordPolicy {
+    maxLength: number;
     minLength: number;
     requireUppercase: boolean;
     requireLowercase: boolean;
     requireNumbers: boolean;
     requireSpecialChars: boolean;
     expiryDays: number;
-    preventReuse: number;
 }
 
 export interface MFASettings {
@@ -59,6 +59,14 @@ export const updatePasswordPolicy = createAsyncThunk(
     }
 );
 
+export const addPasswordPolicy = createAsyncThunk(
+    'general/addPasswordPolicy',
+    async (policy: PasswordPolicy) => {
+        const response = await generalService.addPasswordPolicy(policy);
+        return response;
+    }
+);
+
 export const fetchMFASettings = createAsyncThunk(
     'general/fetchMFASettings',
     async () => {
@@ -102,13 +110,25 @@ const generalSlice = createSlice({
     extraReducers: (builder) => {
         // Password Policy
         builder
+          .addCase(addPasswordPolicy.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(addPasswordPolicy.fulfilled, (state, action: PayloadAction<PasswordPolicy>) => {
+                state.loading = false;
+                state.passwordPolicy = action.payload;
+            })
+            .addCase(addPasswordPolicy.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || 'Failed to add password policy';
+            })
             .addCase(fetchPasswordPolicy.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(fetchPasswordPolicy.fulfilled, (state, action: PayloadAction<PasswordPolicy>) => {
+            .addCase(fetchPasswordPolicy.fulfilled, (state, action: PayloadAction<any>) => {
                 state.loading = false;
-                state.passwordPolicy = action.payload;
+                state.passwordPolicy = action.payload?.data?.passwordPolicy || null;
             })
             .addCase(fetchPasswordPolicy.rejected, (state, action) => {
                 state.loading = false;

@@ -11,9 +11,9 @@ const AlertViewModal: React.FC<ViewContractAlertModalProps> = ({ visible, alert,
   if (!alert) return null;
 
   // Helper: display communication channels as tags
-  const renderChannels = () => {
-    if (!alert.communicationChannels || alert.communicationChannels.length === 0) return 'N/A';
-    return alert.communicationChannels.map((ch: string) => <Tag key={ch}>{ch.toUpperCase()}</Tag>);
+  const renderChannels = (channels?: string[]) => {
+    if (!channels || channels.length === 0) return 'N/A';
+    return channels.map((ch: string) => <Tag key={ch}>{ch.toUpperCase()}</Tag>);
   };
 
   return (
@@ -33,8 +33,8 @@ const AlertViewModal: React.FC<ViewContractAlertModalProps> = ({ visible, alert,
         <Descriptions.Item label="Trigger Expiry">{alert.triggerExpiry ? 'Yes' : 'No'}</Descriptions.Item>
         <Descriptions.Item label="Enable Custom">{alert.enableCustom ? 'Yes' : 'No'}</Descriptions.Item>
         <Descriptions.Item label="Reminder Interval">{alert.reminderInterval || 'N/A'}</Descriptions.Item>
-        <Descriptions.Item label="Communication Channels">{renderChannels()}</Descriptions.Item>
-        <Descriptions.Item label="Stakeholders">{alert.stakeholders || 'N/A'}</Descriptions.Item>
+        <Descriptions.Item label="Communication Channels">{renderChannels(alert.communicationChannels)}</Descriptions.Item>
+        <Descriptions.Item label="Stakeholders">{renderChannels(alert.stakeholders) || 'N/A'}</Descriptions.Item>
         <Descriptions.Item label="Created At">{new Date(alert.createdAt).toLocaleString()}</Descriptions.Item>
         <Descriptions.Item label="Updated At">{new Date(alert.updatedAt).toLocaleString()}</Descriptions.Item>
       </Descriptions>

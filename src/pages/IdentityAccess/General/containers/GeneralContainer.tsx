@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Row, Col, message, Breadcrumb } from 'antd';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
 
+  fetchPasswordPolicy,
   updatePasswordPolicy,
 } from '../../../../store/slices/generalSlice';
 import type { PasswordPolicy } from '../../../../store/slices/generalSlice';
@@ -19,14 +20,18 @@ const GeneralContainer: React.FC = () => {
 
 
 
+
   const handlePasswordPolicySubmit = async (values: PasswordPolicy) => {
     try {
       await dispatch(updatePasswordPolicy(values)).unwrap();
       message.success('Password policy updated successfully');
+      navigate('/dashboard');
     } catch (err) {
       message.error('Failed to update password policy');
     }
   };
+
+  useEffect(() => { dispatch(fetchPasswordPolicy()) }, [dispatch]);  
 
 
   return (
@@ -41,7 +46,7 @@ const GeneralContainer: React.FC = () => {
         <Row gutter={[16, 16]}>
           <Col xs={12} lg={24}>
             <PasswordPolicyForm
-              initialValues={passwordPolicy || undefined}
+              initialValues={passwordPolicy || null}
               onSubmit={handlePasswordPolicySubmit}
               loading={loading}
             />

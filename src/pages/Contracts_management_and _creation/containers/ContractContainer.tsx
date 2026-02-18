@@ -40,14 +40,14 @@ const ContractContainer: React.FC = () => {
     setViewModalVisible(true);
   };
 
-  const handleDelete = async (userId: string) => {
+  const handleDelete = async (contractId: string) => {
     try {
-      await dispatch(deleteContract(userId)).unwrap();
-      message.success('User deleted successfully');;
+      await dispatch(deleteContract(contractId)).unwrap();
+      message.success('Contract deleted successfully');;
       setReload(prev => !prev);
       return
     } catch (err) {
-      message.error('Failed to delete user');
+      message.error('Failed to delete contract');
     }
   };
 

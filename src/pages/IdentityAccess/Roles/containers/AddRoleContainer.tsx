@@ -56,7 +56,7 @@ const AddRoleContainer: React.FC = () => {
             </Breadcrumb>
             <div style={{ padding: '24px 24px 24px 0px' }}>
 
-                <AddRoleForm onSubmit={handleSubmit} permissions={permissions} selectedRole={selectedRole} />
+                <AddRoleForm onSubmit={handleSubmit} permissions={permissions} selectedRole={id ?selectedRole:[]} />
             </div>
 
         </>
