@@ -29,6 +29,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await axios.post(`${ BASE_URL }/auth/login`, credentials);
       if (response) {
         // Save token and user info
+        console.log('Login successful', response);
+        setLocalStorage("username", credentials.username);
         setLocalStorage(JWT_TOKEN, response?.data?.data?.loginInfo?.accessToken);
         setLocalStorage(PERMISSION_KEY, response?.data?.data?.loginInfo?.permissions);
         setToken(response?.data?.data?.loginInfo?.accessToken)

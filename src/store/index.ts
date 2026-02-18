@@ -4,6 +4,7 @@ import usersReducer from './slices/usersSlice';
 import rolesReducer from './slices/rolesSlice';
 import contractReducer from './slices/contractSlice';
 import contractAlertReducer from './slices/contractAlertSlice';
+import newPasswordReducer from './slices/newPasswordSlice';
 
 export const store = configureStore({
     reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
         roles: rolesReducer,
         contracts: contractReducer,
         alerts: contractAlertReducer,
+        newPassword: newPasswordReducer,
         
     },
     middleware: (getDefaultMiddleware) =>
