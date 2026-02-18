@@ -58,10 +58,9 @@ const MFASettingsForm: React.FC<MFASettingsFormProps> = ({
 
         <Form.Item>
           <Space>
-            <Button type="primary" htmlType="submit" loading={loading}>
+            <Button type="primary" htmlType="submit" loading={loading} style={{ float: 'right' }}>
               Save Settings
             </Button>
-            <Button onClick={() => form.resetFields()}>Reset</Button>
           </Space>
         </Form.Item>
       </Form>

@@ -2,7 +2,6 @@ import React from 'react';
 import { Form, Input, Button, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import './LoginForm.css';
-import logo from '../../../assets/login1.webp';
 
 const { Text } = Typography;
 
@@ -64,9 +63,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading }) => {
                 <Input.Password prefix={<LockOutlined />} placeholder="Password" />
               </Form.Item>
 
-              <div className="forgot-container">
+              {/* <div className="forgot-container">
                 <a href="#forgot" className="forgot-link">Forgot password?</a>
-              </div>
+              </div> */}
 
               <Form.Item>
                 <Button

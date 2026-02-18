@@ -5,6 +5,7 @@ import { Spin } from 'antd';
 const GeneralContainer = lazy(() => import('./General/containers/GeneralContainer'));
 const UsersContainer = lazy(() => import('./Users/containers/UsersContainer'));
 const RolesContainer = lazy(() => import('./Roles/containers/RolesContainer'));
+const AddRoleContainer = lazy(() => import('./Roles/containers/AddRoleContainer'));
 
 const IdentityAccessRoutes: React.FC = () => {
   return (
@@ -13,6 +14,9 @@ const IdentityAccessRoutes: React.FC = () => {
         <Route path="/general" element={<GeneralContainer />} />
         <Route path="/users" element={<UsersContainer />} />
         <Route path="/roles" element={<RolesContainer />} />
+        {/* Add Role page */}
+        <Route path="/roles/add" element={<AddRoleContainer />} />
+        <Route path="/roles/edit/:id" element={<AddRoleContainer />} />
       </Routes>
     </Suspense>
   );

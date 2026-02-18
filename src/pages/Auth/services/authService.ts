@@ -1,4 +1,5 @@
 import apiClient from '../../../utils/apiClient';
+import { store } from "../../../utils/httpUtil"
 
 interface LoginCredentials {
     username: string;
@@ -14,7 +15,7 @@ interface LoginResponse {
 
 export const authService = {
     login: async (credentials: LoginCredentials): Promise<LoginResponse> => {
-        const response = await apiClient.post('/api/auth/login', credentials);
+        const response = await store('/auth/login', credentials);
         return response.data;
     },
 

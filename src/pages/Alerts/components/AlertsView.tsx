@@ -2,30 +2,23 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Form, Input, Button, Switch, Select, Divider, Modal } from 'antd';
 import { SaveOutlined, EyeOutlined } from '@ant-design/icons';
+import { useParams } from 'react-router-dom';
+
 
 const { Option } = Select;
 
-interface Contract {
-  id: string;
-  name: string;
-}
-
-interface User {
-  id: string;
-  name: string;
-}
 
 interface AlertsViewProps {
-  contracts: Contract[];
-  users: User[];
+  initialData: any;
+  contracts?: any;
   onFinish: (values: any) => void; // callback to parent page
 }
 
-const AlertsView: React.FC<AlertsViewProps> = ({ contracts, users, onFinish }) => {
+const AlertsView: React.FC<AlertsViewProps> = ({ onFinish, initialData = null, contracts = [] }) => {
   const [form] = Form.useForm();
+  const { id } = useParams()
   const [selectedContract, setSelectedContract] = useState<string | null>(null);
   const [customReminder, setCustomReminder] = useState(false);
-  const [previewVisible, setPreviewVisible] = useState(false);
 
   // Enable/disable interval field
   const [intervalDisabled, setIntervalDisabled] = useState(true);
@@ -38,6 +31,18 @@ const AlertsView: React.FC<AlertsViewProps> = ({ contracts, users, onFinish }) =
     onFinish(values); // send data to parent
   };
 
+
+  useEffect(() => {
+    if (initialData) {
+      form.setFieldsValue({
+        ...initialData,
+      });
+      setSelectedContract(initialData.contractId);
+      setCustomReminder(initialData.enableCustom);
+
+    }
+  }, [initialData, form]);
+
   return (
     <div>
       <h1 style={{ marginBottom: 24 }}>Alerts Configuration</h1>
@@ -47,27 +52,27 @@ const AlertsView: React.FC<AlertsViewProps> = ({ contracts, users, onFinish }) =
           form={form}
           layout="vertical"
           onFinish={handleSave}
-          initialValues={{
-            triggerExpiry: true,
-            customReminder: false,
-            alertInterval: 15,
-            channels: ['email'],
-            stakeholders: [],
-          }}
+
+          initialValues={initialData ? {
+            ...initialData,
+  
+          } : {  reminderInterval: initialData?.reminderInterval ? initialData.reminderInterval : 30,}}
         >
           {/* Select Contract */}
           <Form.Item
             label="Select Contract"
-            name="contract"
+            name="contractId"
+
             rules={[{ required: true, message: 'Please select a contract' }]}
           >
             <Select
               placeholder="Select a contract"
+              disabled={id ? true : false}
               onChange={(value) => setSelectedContract(value)}
             >
-              {contracts.map((c) => (
-                <Option key={c.id} value={c.id}>
-                  {c.name}
+              {contracts?.data?.map((c: any) => (
+                <Option key={c.value} value={c.value}>
+                  {c.label}
                 </Option>
               ))}
             </Select>
@@ -88,7 +93,7 @@ const AlertsView: React.FC<AlertsViewProps> = ({ contracts, users, onFinish }) =
               {/* Custom Reminder */}
               <Form.Item
                 label="Enable Custom Reminder"
-                name="customReminder"
+                name="enableCustom"
                 valuePropName="checked"
               >
                 <Switch
@@ -99,8 +104,9 @@ const AlertsView: React.FC<AlertsViewProps> = ({ contracts, users, onFinish }) =
               {/* Reminder Interval */}
               <Form.Item
                 label="Reminder Interval (days)"
-                name="alertInterval"
+                name="reminderInterval"
                 rules={[{ required: customReminder, message: 'Please enter interval' }]}
+            
               >
                 <Input
                   type="number"
@@ -110,59 +116,59 @@ const AlertsView: React.FC<AlertsViewProps> = ({ contracts, users, onFinish }) =
               </Form.Item>
 
               {/* Communication Channels */}
-              <Form.Item label="Communication Channels" name="channels">
+              <Form.Item label="Communication Channels" name="communicationChannels">
                 <Select mode="multiple" placeholder="Select channels">
                   <Option value="email">Email</Option>
-                  <Option value="sms">SMS</Option>
-                  <Option value="whatsapp">WhatsApp</Option>
                 </Select>
               </Form.Item>
 
               {/* Stakeholders */}
-              <Form.Item label="Stakeholders" name="stakeholders">
-                <Select mode="multiple" placeholder="Select stakeholders">
-                  {users.map((u) => (
-                    <Option key={u.id} value={u.id}>
-                      {u.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Form.Item>
+              <Form.Item
+                label="Stakeholder Emails"
+                name="stakeholders"
+                rules={[
+                  {
+                    required: true,
+                    message: "At least one email is required",
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (!value || value.length === 0) return Promise.resolve();
 
+                      const invalid = value.find(
+                        (email: string) =>
+                          !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)
+                      );
+
+                      return invalid
+                        ? Promise.reject(new Error(`Invalid email: ${invalid}`))
+                        : Promise.resolve();
+                    },
+                  },
+                ]}
+              >
+                <Select
+                  mode="tags"
+                  placeholder="Enter emails and press enter"
+                  tokenSeparators={[",", " "]}
+                />
+              </Form.Item>
               <Divider />
 
-              <Form.Item>
-                <Button
-                  type="default"
-                  icon={<EyeOutlined />}
-                  style={{ marginRight: 8 }}
-                  onClick={() => setPreviewVisible(true)}
-                >
-                  Preview Alert
-                </Button>
+              <Form.Item style={{ float: 'right' }}>
 
                 <Button
                   type="primary"
                   htmlType="submit"
                   icon={<SaveOutlined />}
                 >
-                  Save Alert
+                  {id ? 'Update Alert' : 'Save Alert'}
                 </Button>
               </Form.Item>
             </>
           )}
         </Form>
       </Card>
-
-      {/* Preview Modal */}
-      <Modal
-        title="Preview Alert"
-        visible={previewVisible}
-        footer={null}
-        onCancel={() => setPreviewVisible(false)}
-      >
-        <pre>{JSON.stringify(form.getFieldsValue(), null, 2)}</pre>
-      </Modal>
     </div>
   );
 };

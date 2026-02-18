@@ -7,6 +7,7 @@ import {
   updateUser,
   deleteUser,
   setPagination,
+  fetchRoleDropDown
 } from '../../../../store/slices/usersSlice';
 import type { CreateUserPayload, UpdateUserPayload, User } from '../../../../store/slices/usersSlice';
 import UsersList from '../components/UsersList';
@@ -14,91 +15,140 @@ import UserFormModal from '../components/UserFormModal';
 
 const UsersContainer: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { users, loading, pagination, error } = useAppSelector((state) => state.users);
+  const { users, loading, pageInfo, roles } = useAppSelector((state) => state.users);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<any | null>(null);
+  const [reload, setReload] = useState(false);
 
-  // Mock roles - in real app, fetch from roles state
-  const availableRoles = ['Admin', 'Manager', 'User', 'Merchant'];
 
-  useEffect(() => {
-    dispatch(fetchUsers({ page: pagination.page, pageSize: pagination.pageSize }));
-  }, [dispatch, pagination.page, pagination.pageSize]);
 
-  useEffect(() => {
-    if (error) {
-      message.error(error);
-    }
-  }, [error]);
+
 
   const handleCreate = () => {
     setSelectedUser(null);
     setModalVisible(true);
+
+
   };
 
   const handleEdit = (user: User) => {
+    console.log('Editing user:', user);
     setSelectedUser(user);
     setModalVisible(true);
   };
 
   const handleDelete = async (userId: string) => {
     try {
-      await dispatch(deleteUser(userId)).unwrap();
-      message.success('User deleted successfully');
-    } catch (err) {
-      message.error('Failed to delete user');
+      const response = await dispatch(deleteUser(userId)).unwrap();
+
+      // handle logical failure returned from API
+      if (!response || response.error || response.success === false || response.status >= 400) {
+        message.error(response?.data?.data?.message || "Delete failed");
+        setSelectedUser(null);
+        setReload(prev => !prev);
+        // return;
+      } else {
+        message.success(response?.data?.data?.message || "User deleted successfully");
+        setSelectedUser(null);
+        setReload(prev => !prev);
+      }
+
+
+
+    } catch (err: any) {
+
+      message.error(
+        err?.data?.message ||
+        err?.message ||
+        "Failed to delete user"
+      );
     }
   };
 
+
+  const mapRolesWithLabelValue = (
+    roleIds: any,
+    rolesData: any
+  ) => {
+    return roleIds?.map((roleId: any) => {
+      const role = rolesData?.data?.find((r: any) => r.value === roleId);
+      return {
+        label: role?.label ?? "",
+        value: roleId,
+      };
+    });
+  };
   const handleSubmit = async (values: CreateUserPayload | UpdateUserPayload) => {
     try {
+      const payload = {
+        ...values,
+        roles: mapRolesWithLabelValue(values?.roles, roles?.data),
+      };
       if ('id' in values) {
-        await dispatch(updateUser(values as UpdateUserPayload)).unwrap();
+        await dispatch(
+          updateUser(payload as UpdateUserPayload)
+        ).unwrap();
+
         message.success('User updated successfully');
       } else {
-        await dispatch(createUser(values as CreateUserPayload)).unwrap();
+        await dispatch(
+          createUser(payload as CreateUserPayload)
+        ).unwrap();
+
         message.success('User created successfully');
       }
+
       setModalVisible(false);
       setSelectedUser(null);
+      setReload(prev => !prev);
+
     } catch (err) {
       message.error(`Failed to ${selectedUser ? 'update' : 'create'} user`);
     }
+
   };
 
   const handlePageChange = (page: number, pageSize: number) => {
     dispatch(setPagination({ page, pageSize }));
   };
 
-  const handleSearch = (value: string) => {
-    dispatch(fetchUsers({ page: 1, pageSize: pagination.pageSize, search: value }));
-  };
+  const handleSearch = () => { }
+
+  useEffect(() => {
+    dispatch(fetchUsers({ filters: [], pageInfo }));
+    dispatch(fetchRoleDropDown())
+  }, [dispatch, reload]);
+
+
 
   return (
-    <div style={{ padding: '24px' }}>
+    <>
       <h2>User Management</h2>
-      <UsersList
-        users={users}
-        loading={loading}
-        pagination={pagination}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onCreate={handleCreate}
-        onPageChange={handlePageChange}
-        onSearch={handleSearch}
-      />
-      <UserFormModal
-        visible={modalVisible}
-        user={selectedUser}
-        roles={availableRoles}
-        onSubmit={handleSubmit}
-        onCancel={() => {
-          setModalVisible(false);
-          setSelectedUser(null);
-        }}
-        loading={loading}
-      />
-    </div>
+      <div style={{ padding: '24px 24px 24px 0px' }}>
+        <UsersList
+          users={users}
+          loading={loading}
+          pagination={pageInfo}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onCreate={handleCreate}
+          onPageChange={handlePageChange}
+          onSearch={handleSearch}
+        />
+        <UserFormModal
+          visible={modalVisible}
+          user={selectedUser}
+          roles={roles?.data}
+          onSubmit={handleSubmit}
+          onCancel={() => {
+            setModalVisible(false);
+            setSelectedUser(null);
+          }}
+          loading={loading}
+        />
+      </div>
+    </>
+
   );
 };
 

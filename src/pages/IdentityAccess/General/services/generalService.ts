@@ -1,15 +1,20 @@
 import apiClient from '../../../../utils/apiClient';
 import type { PasswordPolicy, MFASettings, OTPSettings } from '../../../../store/slices/generalSlice';
+import { store,fetch, update } from '../../../../utils/httpUtil';
 
 export const generalService = {
     // Password Policy
     getPasswordPolicy: async (): Promise<PasswordPolicy> => {
-        const response = await apiClient.get('/api/iam/general/password-policy');
+        const response = await fetch('identity-access/general-policy');
+        return response.data;
+    },
+    addPasswordPolicy: async (policy: PasswordPolicy): Promise<PasswordPolicy> => {
+        const response = await store('identity-access/general-policy', policy);
         return response.data;
     },
 
     updatePasswordPolicy: async (policy: PasswordPolicy): Promise<PasswordPolicy> => {
-        const response = await apiClient.put('/api/iam/general/password-policy', policy);
+        const response = await store('identity-access/general-policy', { passwordPolicy: policy });
         return response.data;
     },
 

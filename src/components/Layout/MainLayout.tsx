@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { Layout, Menu, Button, theme, Dropdown, Avatar, Spin } from 'antd';
+import { Layout, Menu, Button, theme, Dropdown, Avatar, Spin, Typography } from 'antd';
 import type { MenuProps } from 'antd';
 import {
   MenuFoldOutlined,
@@ -12,6 +12,7 @@ import {
   SafetyOutlined,
   TeamOutlined,
   AlertOutlined,
+  FileTextOutlined,
 } from '@ant-design/icons';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -22,6 +23,7 @@ const DashboardRoutes = lazy(() => import('../../pages/Dashboard'));
 const IdentityAccessRoutes = lazy(() => import('../../pages/IdentityAccess'));
 const SettingsRoutes = lazy(() => import('../../pages/Settings'));
 const AlertsRoutes = lazy(() => import('../../pages/Alerts'));
+const ContractsView = lazy(() => import('../../pages/Contracts_management_and _creation'));
 
 
 const { Header, Sider, Content } = Layout;
@@ -58,6 +60,13 @@ const MainLayout: React.FC = () => {
       icon: <DashboardOutlined />,
       label: 'Dashboard',
     },
+
+    {
+      key: '/contracts',
+      icon: <FileTextOutlined />,
+      label: 'Contracts',
+    },
+
     {
       key: 'identity-access',
       icon: <SecurityScanOutlined />,
@@ -88,11 +97,11 @@ const MainLayout: React.FC = () => {
       label: 'Alerts',
     },
 
-    {
-      key: '/settings',
-      icon: <SettingOutlined />,
-      label: 'Settings',
-    }
+    // {
+    //   key: '/settings',
+    //   icon: <SettingOutlined />,
+    //   label: 'Settings',
+    // }
 
   ];
 
@@ -160,7 +169,8 @@ const MainLayout: React.FC = () => {
              alignItems: 'center',
              justifyContent: 'center',
              transition: 'all 0.3s ease',
-             flexShrink: 0,
+              flexShrink: 0,
+              backgroundColor: collapsed ? 'transparent' : 'white',
             }}
           >
             {collapsed ? (
@@ -170,11 +180,10 @@ const MainLayout: React.FC = () => {
                 style={{ height: '40px', width: 'auto' }} 
               />
             ) : (
-              <img 
-                src="/unnamed.jpg" 
-                alt="Logo" 
-                style={{ height: '50px', width: 'auto' }} 
-              />
+
+                <Typography.Text strong style={{ fontSize: '26px', color: 'black' }}>
+                  ClauseHQ
+                </Typography.Text>
             )}
           </div>
           <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', minHeight: 0 }}>
@@ -273,6 +282,7 @@ const MainLayout: React.FC = () => {
           >
             <Routes>
               <Route path="/dashboard/*" element={<DashboardRoutes />} />
+              <Route path="/contracts/*" element={<ContractsView />} />
               <Route path="/iam/*" element={<IdentityAccessRoutes />} />
               <Route path="/settings/*" element={<SettingsRoutes />} />
               <Route path="/alerts/*" element={<AlertsRoutes />} />

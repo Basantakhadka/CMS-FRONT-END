@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { message } from 'antd';
 import { useAuth } from '../../../context/AuthContext';
 import LoginForm from '../components/LoginForm';
 import '../Auth.css';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginFormValues {
   username: string;
@@ -11,30 +11,24 @@ interface LoginFormValues {
 }
 
 const LoginContainer: React.FC = () => {
-  const navigate = useNavigate();
   const { login } = useAuth();
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values: LoginFormValues) => {
     setLoading(true);
     try {
-      // Simulate API call - replace with actual authentication
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      // Simple validation for demo (username: admin, password: admin123)
-      if (values.username === 'admin' && values.password === 'admin123') {
-        login({
-          id: '1',
-          username: values.username,
-          email: 'admin@example.com',
-          token: 'demo-token-123',
-        });
+      const response = await login(values);
+      console.log({ response })
+      if (response?.data?.loginInfo?.accessToken) {
+        setLoading(false)
         message.success('Login successful!');
         navigate('/dashboard');
       } else {
         message.error('Invalid username or password');
       }
     } catch (error) {
+      console.error(error);
       message.error('Login failed. Please try again.');
     } finally {
       setLoading(false);
