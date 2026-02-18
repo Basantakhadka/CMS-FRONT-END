@@ -1,49 +1,67 @@
-import React, { useEffect, useState } from 'react';
-import {
-    Form,
-    Input,
-    Button,
-    Space,
-    Checkbox,
-    Divider,
-} from 'antd';
+import React, { useEffect, useState, useRef } from "react";
+import { Form, Input, Button, Space, Checkbox, Divider } from "antd";
+
+interface PermissionChild {
+    key: string;
+    title: string;
+}
 
 interface PermissionGroup {
     key: string;
     title: string;
-    children: { key: string; title: string }[];
+    children: PermissionChild[];
 }
-
 
 interface AddRoleFormProps {
-    onSubmit: (payload: {
-        title: string;
-        permissions: string[];
-        active: any;
-    }) => any;
-    permissions: any
-    selectedRole?: any
+    onSubmit: any;
+    permissions: PermissionGroup[];
+    selectedRole?: any;
 }
 
-const AddRoleForm: React.FC<AddRoleFormProps> = ({ onSubmit, permissions, selectedRole }) => {
-    console.log({ selectedRole })
-    console.log(permissions)
+const AddRoleForm: React.FC<AddRoleFormProps> = ({
+    onSubmit,
+    permissions,
+    selectedRole,
+}) => {
     const [form] = Form.useForm();
-    const [selectedPermissions, setSelectedPermissions] = useState<any>(selectedRole?.role?.permissions || []);
-    console.log({ selectedPermissions })
 
-    // Toggle all permissions in a group
+    // Single source of truth for permissions
+    const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
+
+    // Ref ensures we initialize edit mode only once
+    const initialized = useRef(false);
+
+    /** Initialize state once when editing a role */
+    useEffect(() => {
+        if (selectedRole?.role && !initialized.current) {
+            form.setFieldsValue({
+                title: selectedRole.role.title,
+            });
+            setSelectedPermissions(selectedRole.role.permissions || []);
+            initialized.current = true;
+        }
+
+        // Reset when creating new role
+        if (!selectedRole) {
+            initialized.current = false;
+            form.resetFields();
+            setSelectedPermissions([]);
+        }
+    }, [selectedRole, form]);
+
+    /** Toggle all permissions in a group */
     const toggleGroup = (group: PermissionGroup) => {
-        const keys = group.children.map(c => c.key);
-        const allChecked = keys.every(k => selectedPermissions?.includes(k));
+        const keys = group.children.map((c) => c.key);
+        const allChecked = keys.every((k) => selectedPermissions.includes(k));
 
-        setSelectedPermissions(
-            allChecked
-                ? selectedPermissions.filter((k: any) => !keys.includes(k))
-                : Array.from(new Set([...selectedPermissions, ...keys]))
-        );
+        if (allChecked) {
+            setSelectedPermissions((prev) => prev.filter((k) => !keys.includes(k)));
+        } else {
+            setSelectedPermissions((prev) => Array.from(new Set([...prev, ...keys])));
+        }
     };
 
+    /** Submit form */
     const submitForm = async () => {
         try {
             const values = await form.validateFields();
@@ -51,79 +69,73 @@ const AddRoleForm: React.FC<AddRoleFormProps> = ({ onSubmit, permissions, select
             onSubmit({
                 title: values.title,
                 permissions: selectedPermissions,
-                active: true
+                active: true,
             });
 
+            // Optional: reset for create mode
             form.resetFields();
             setSelectedPermissions([]);
+            initialized.current = false;
         } catch {
-            // validation handled by form
+            // validation handled by Form
         }
     };
 
-    useEffect(() => {
-        if (selectedRole) {
-            form.setFieldsValue({
-                title: selectedRole?.role?.title,
-            });
-            setSelectedPermissions(selectedRole?.role?.permissions || []);
-        }
-
-    }, [selectedRole, form]);
-
     return (
-        <Form
-            form={form}
-            layout="vertical"
-
-        >
+        <Form form={form} layout="vertical">
+            {/* ROLE TITLE */}
             <Form.Item
                 label="Role Title"
                 name="title"
-                initialValue={selectedRole && selectedRole?.role?.title}
-                rules={[{ required: true, message: 'Please enter role name' }]}
-                style={{
-                    width: "25%"
-                }}
+                rules={[{ required: true, message: "Please enter role name" }]}
+                style={{ width: "25%" }}
             >
                 <Input placeholder="Enter role name" />
             </Form.Item>
 
-            <Form.Item label="Permissions" >
-                <Space direction="vertical" size="large" style={{ width: '100%' }}>
-                    {permissions?.map((group: any) => {
-                        const groupKeys = group?.children?.map((c: any) => c.key);
-                        const allChecked = groupKeys?.every((k: any) => selectedRole?.role?.permissions?.includes(k));
+            {/* PERMISSIONS */}
+            <Form.Item label="Permissions">
+                <Space direction="vertical" size="large" style={{ width: "100%" }}>
+                    {permissions?.map((group) => {
+                        const groupKeys = group.children.map((c) => c.key);
+
+                        // compute group checkbox state from live state ONLY
+                        const allChecked = groupKeys.every((k) => selectedPermissions.includes(k));
                         const someChecked =
-                            groupKeys?.some((k: any) => selectedRole?.role?.permissions?.includes(k)) && !allChecked;
+                            groupKeys.some((k) => selectedPermissions.includes(k)) && !allChecked;
 
                         return (
-                            <div key={group.key} style={{
-                                padding: 16,
-                                borderRadius: 10,
-                                background: '#fff',
-                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
-                                width: '100%'
-                            }}>
-                                <Space align="center">
-                                    <Checkbox
-                                        indeterminate={someChecked}
-                                        checked={allChecked}
-                                        onChange={() => toggleGroup(group)}
-                                    >
-                                        <strong>{group.title}</strong>
-                                    </Checkbox>
-                                </Space>
+                            <div
+                                key={group.key}
+                                style={{
+                                    padding: 16,
+                                    borderRadius: 10,
+                                    background: "#fff",
+                                    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                                    width: "100%",
+                                }}
+                            >
+                                {/* GROUP CHECKBOX */}
+                                <Checkbox
+                                    indeterminate={someChecked}
+                                    checked={allChecked}
+                                    onChange={() => toggleGroup(group)}
+                                >
+                                    <strong>{group.title}</strong>
+                                </Checkbox>
 
-                                <div style={{ marginTop: 8, paddingLeft: 24 }}>
+                                {/* CHILD CHECKBOXES */}
+                                <div style={{ marginTop: 10, paddingLeft: 24 }}>
                                     <Checkbox.Group
-                                        value={selectedRole?.role?.permissions}
-                                        onChange={(values) =>
-                                            setSelectedPermissions(values as string[])
-                                        }
+                                        value={selectedPermissions.filter((p) => group.children.some(c => c.key === p))}
+                                        onChange={(groupValues: string[]) => {
+                                            const groupKeys = group.children.map(c => c.key);
+                                            const filtered = selectedPermissions.filter(p => !groupKeys.includes(p));
+                                            setSelectedPermissions([...filtered, ...groupValues]);
+                                        }}
                                     >
                                         <Space wrap>
-                                            {group.children.map((child: any) => (
+                                            {group.children.map((child) => (
                                                 <Checkbox key={child.key} value={child.key}>
                                                     {child.title}
                                                 </Checkbox>
@@ -132,19 +144,18 @@ const AddRoleForm: React.FC<AddRoleFormProps> = ({ onSubmit, permissions, select
                                     </Checkbox.Group>
                                 </div>
 
-                                <Divider style={{ margin: '16px 0' }} />
+                                <Divider style={{ margin: "16px 0" }} />
                             </div>
                         );
                     })}
                 </Space>
             </Form.Item>
 
-            <Form.Item style={{ float: 'right' }}>
-                <Space>
-                    <Button type="primary" onClick={submitForm} >
-                        {selectedRole?.role?.permissions?.length > 0 ? "Edit Role" : " Create Role"}
-                    </Button>
-                </Space>
+            {/* SUBMIT BUTTON */}
+            <Form.Item style={{ textAlign: "right" }}>
+                <Button type="primary" onClick={submitForm}>
+                    {selectedRole ? "Update Role" : "Create Role"}
+                </Button>
             </Form.Item>
         </Form>
     );

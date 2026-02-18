@@ -36,7 +36,7 @@ export interface Role {
 export interface UsersState {
     users: any;
     loading: boolean;
-    error: string | null;
+    error: any | null;
     roles: {
         data: Role[];
         loading: boolean;
@@ -69,7 +69,6 @@ const initialState: UsersState = {
 export const fetchUsers = createAsyncThunk(
     'users/fetchUsers',
     async (params: any) => {
-        console.log({ params })
         const response = await usersService.getUsers(params);
         return response;
     }
@@ -109,8 +108,8 @@ export const updateUser = createAsyncThunk(
 export const deleteUser = createAsyncThunk(
     'users/deleteUser',
     async (id: string) => {
-        await usersService.deleteUser(id);
-        return id;
+       const response = await usersService.deleteUser(id);
+        return response;
     }
 );
 
@@ -170,7 +169,7 @@ const usersSlice = createSlice({
             })
             .addCase(createUser.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message || 'Failed to create user';
+                state.error = action.error;
             })
             // Update User
             .addCase(updateUser.pending, (state) => {
@@ -187,7 +186,7 @@ const usersSlice = createSlice({
             })
             .addCase(updateUser.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message || 'Failed to update user';
+                state.error = action.error;
             })
 
             // // Delete User
@@ -201,7 +200,7 @@ const usersSlice = createSlice({
             })
             .addCase(deleteUser.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message || 'Failed to delete user';
+                state.error = action.error;
             })
             // Assign Roles
             .addCase(fetchRoleDropDown.pending, (state) => {

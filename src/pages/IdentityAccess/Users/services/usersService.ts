@@ -24,8 +24,9 @@ export const usersService = {
         return response.data;
     },
 
-    deleteUser: async (id: string): Promise<void> => {
-        await destroy(`identity-access/users/${ id }`);
+    deleteUser: async (id: string): Promise<any> => {
+        const response  = await destroy(`identity-access/users/${ id }`);
+        return response;
     },
 
     getRoleDropdown: async (): Promise<any> => {

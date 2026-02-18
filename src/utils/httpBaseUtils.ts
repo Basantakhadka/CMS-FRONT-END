@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { BASE_URL, JWT_TOKEN, PERMISSION_KEY } from '../constants';
-import history from './history';
+
 
 import { clearLocalStorage, getLocalStorage, setLocalStorage } from './storageUtils';
 // import { setSessionTime, setSessionId } from '../features/slice/sessionSlice';
@@ -36,6 +36,7 @@ export function httpBase(isDownloadable: boolean = false, signal?: any) {
             return response;
         },
         (error) => {
+            console.log('HTTP Error:', error);
             if (error instanceof AxiosError) {
                 if (error.response?.status == 401) {
                     clearLocalStorage(JWT_TOKEN);
@@ -49,7 +50,7 @@ export function httpBase(isDownloadable: boolean = false, signal?: any) {
                 }
             }
 
-            return Promise.reject(error);
+            return error?.response;
         }
     );
 

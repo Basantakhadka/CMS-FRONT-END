@@ -97,11 +97,11 @@ const MainLayout: React.FC = () => {
       label: 'Alerts',
     },
 
-    {
-      key: '/settings',
-      icon: <SettingOutlined />,
-      label: 'Settings',
-    }
+    // {
+    //   key: '/settings',
+    //   icon: <SettingOutlined />,
+    //   label: 'Settings',
+    // }
 
   ];
 
