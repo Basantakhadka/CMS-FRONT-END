@@ -10,6 +10,7 @@ import { useAppDispatch } from "../../../store/hooks";
 import { JWT_TOKEN } from "../../../constants";
 import { setNewPassword } from "../../../store/slices/newPasswordSlice";
 import { clearLocalStorage, getLocalStorage } from "../../../utils/storageUtils";
+import { fetchPasswordPolicy } from "../../../store/slices/generalSlice";
 
 const { Title, Text } = Typography;
 
@@ -85,6 +86,12 @@ const ChangePassword: React.FC<Props> = ({
   { ok: !policy?.requireNumbers || /\d/.test(password), text: `At least ${policy?.requireNumbers ? 1 : 0} number` },
   { ok: !policy?.requireSpecialChars || /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password), text: `At least ${policy?.requireSpecialChars ? 1 : 0} special character` },
 ];
+
+
+
+  useEffect(() => {
+    if (!passwordPolicyPayload) dispatch(fetchPasswordPolicy());
+  }, [dispatch]);
 
 
 
