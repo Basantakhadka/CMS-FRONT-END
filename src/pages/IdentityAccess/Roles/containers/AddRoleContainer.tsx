@@ -33,7 +33,7 @@ const AddRoleContainer: React.FC = () => {
             }
 
         } catch (error) {
-            message.error('Failed to create role');
+            console.log('Failed to create role');
         }
     };
 

@@ -51,6 +51,13 @@ const AlertList: React.FC<AlertsListProps> = ({
     key: 'sn',
     render: (_text, _record, index) => index + 1,
   },
+   {
+    title: 'Contract Title',
+    dataIndex: 'title',
+    key: 'title',
+    render: (title?: string) =>
+       title || '-',
+  },
   {
     title: 'Trigger Expiry',
     dataIndex: 'triggerExpiry',

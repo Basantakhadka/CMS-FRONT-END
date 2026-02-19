@@ -40,7 +40,7 @@ const ContractViewModal: React.FC<ViewContractModalProps> = ({ visible, contract
           )}
         </Descriptions.Item>
         <Descriptions.Item label="Contract Value">
-          {contract.contractValue ? `$${parseFloat(contract.contractValue).toLocaleString()}` : 'N/A'}
+          {contract.contractValue ? `${parseFloat(contract.contractValue).toLocaleString()}` : 'N/A'}
         </Descriptions.Item>
         <Descriptions.Item label="Jurisdiction">{contract.jurisdiction || 'N/A'}</Descriptions.Item>
         <Descriptions.Item label="Renewal Terms">{contract.renewalTerms || 'N/A'}</Descriptions.Item>

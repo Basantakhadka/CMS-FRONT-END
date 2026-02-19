@@ -160,7 +160,7 @@ const rolesSlice = createSlice({
             })
             .addCase(createRole.fulfilled, (state, action: PayloadAction<Role>) => {
                 state.loading = false;
-                state.roles.unshift(action.payload);
+                state.roles= action.payload;
             })
             .addCase(createRole.rejected, (state, action) => {
                 state.loading = false;

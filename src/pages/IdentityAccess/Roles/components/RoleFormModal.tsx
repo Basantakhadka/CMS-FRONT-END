@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { Modal, Form, Input, Select } from 'antd';
-import type { Role, Permission, CreateRolePayload, UpdateRolePayload } from '../../../../store/slices/rolesSlice';
+import type { Role, CreateRolePayload } from '../../../../store/slices/rolesSlice';
 
 interface RoleFormModalProps {
   visible: boolean;
-  role?: Role | null;
-  permissions: Permission[];
-  onSubmit: (values: CreateRolePayload | UpdateRolePayload) => void;
+  role?: any | null;
+  permissions: any[];
+  onSubmit: (values: CreateRolePayload | any) => void;
   onCancel: () => void;
   loading: boolean;
 }
@@ -26,7 +26,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
       form.setFieldsValue({
         name: role.name,
         description: role.description,
-        permissions: role.permissions.map((p) => p.id),
+        permissions: role.permissions.map((p:any) => p.id),
       });
     } else if (visible && !role) {
       form.resetFields();
@@ -36,9 +36,9 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
   const handleSubmit = () => {
     form.validateFields().then((values) => {
       if (role) {
-        onSubmit({ id: role.id, ...values } as UpdateRolePayload);
+        onSubmit({ id: role.id, ...values } as any);
       } else {
-        onSubmit(values as CreateRolePayload);
+        onSubmit(values as any);
       }
     });
   };

@@ -144,7 +144,7 @@ const usersSlice = createSlice({
             })
             .addCase(fetchUsers.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.error.message || 'Failed to fetch users';
+                state.error = action.error;
             })
             // Fetch User By ID
             // .addCase(fetchUserById.pending, (state) => {

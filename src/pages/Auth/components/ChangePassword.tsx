@@ -54,26 +54,26 @@ const ChangePassword: React.FC<Props> = ({
   /* SUBMIT */
   const handleSubmit = async (values: any) => {
     console.log("Change Password Payload:", values);
-    // if (values.password !== values.confirmPassword) {
-    //   return message.error("Passwords do not match");
-    // }
+    if (values.password !== values.confirmPassword) {
+      return message.error("Passwords do not match");
+    }
 
-    // setLoading(true);
-    // try {
-    //   await changePassword({ ...values, username });
+    setLoading(true);
+    try {
+      await changePassword({ ...values, username });
 
-    //   dispatch(setNewPassword(false));
-    //   clearLocalStorage(JWT_TOKEN);
+      dispatch(setNewPassword(false));
+      clearLocalStorage(JWT_TOKEN);
 
-    //   message.success("Password changed successfully. Please login.");
-    //   navigate("/");
-    // } catch (e: any) {
-    //   message.error(
-    //     e?.response?.data?.data?.message || "Failed to change password"
-    //   );
-    // } finally {
-    //   setLoading(false);
-    // }
+      message.success("Password changed successfully. Please login.");
+      navigate("/");
+    } catch (e: any) {
+      message.error(
+        e?.response?.data?.data?.message || "Failed to change password"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   /* LIVE PASSWORD CHECKS */

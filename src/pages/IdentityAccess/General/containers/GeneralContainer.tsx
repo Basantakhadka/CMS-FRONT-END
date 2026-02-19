@@ -27,7 +27,7 @@ const GeneralContainer: React.FC = () => {
       message.success('Password policy updated successfully');
       navigate('/dashboard');
     } catch (err) {
-      message.error('Failed to update password policy');
+      console.log('Failed to update password policy');
     }
   };
 

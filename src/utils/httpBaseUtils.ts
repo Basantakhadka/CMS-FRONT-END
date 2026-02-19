@@ -36,7 +36,6 @@ export function httpBase(isDownloadable: boolean = false, signal?: any) {
             return response;
         },
         (error) => {
-            console.log('HTTP Error:', error);
             if (error instanceof AxiosError) {
                 if (error.response?.status == 401) {
                     clearLocalStorage(JWT_TOKEN);
@@ -50,7 +49,7 @@ export function httpBase(isDownloadable: boolean = false, signal?: any) {
                 }
             }
 
-            return error?.response;
+            return Promise.reject(error);
         }
     );
 

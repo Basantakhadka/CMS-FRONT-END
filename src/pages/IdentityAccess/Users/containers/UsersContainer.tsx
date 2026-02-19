@@ -32,36 +32,18 @@ const UsersContainer: React.FC = () => {
   };
 
   const handleEdit = (user: User) => {
-    console.log('Editing user:', user);
     setSelectedUser(user);
     setModalVisible(true);
   };
 
   const handleDelete = async (userId: string) => {
     try {
-      const response = await dispatch(deleteUser(userId)).unwrap();
-
-      // handle logical failure returned from API
-      if (!response || response.error || response.success === false || response.status >= 400) {
-        message.error(response?.data?.data?.message || "Delete failed");
-        setSelectedUser(null);
+      await dispatch(deleteUser(userId)).unwrap();
+      message.success('User deleted successfully');
+      setSelectedUser(null);
         setReload(prev => !prev);
-        // return;
-      } else {
-        message.success(response?.data?.data?.message || "User deleted successfully");
-        setSelectedUser(null);
-        setReload(prev => !prev);
-      }
-
-
-
     } catch (err: any) {
-
-      message.error(
-        err?.data?.message ||
-        err?.message ||
-        "Failed to delete user"
-      );
+     console.log('Failed to delete user', err);
     }
   };
 
@@ -88,7 +70,6 @@ const UsersContainer: React.FC = () => {
         await dispatch(
           updateUser(payload as UpdateUserPayload)
         ).unwrap();
-
         message.success('User updated successfully');
       } else {
         await dispatch(
@@ -103,7 +84,7 @@ const UsersContainer: React.FC = () => {
       setReload(prev => !prev);
 
     } catch (err) {
-      message.error(`Failed to ${selectedUser ? 'update' : 'create'} user`);
+     console.error('Error in handleSubmit:', err);
     }
 
   };
