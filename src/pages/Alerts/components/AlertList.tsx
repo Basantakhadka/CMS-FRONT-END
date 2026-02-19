@@ -89,7 +89,7 @@ const AlertList: React.FC<AlertsListProps> = ({
     dataIndex: 'stakeholders',
     key: 'stakeholders',
     render: (stakeholders?: any) =>
-       stakeholders || '-',
+       stakeholders?.length ? stakeholders.join(", ") : '-',
   },
   {
     title: 'Created On',
