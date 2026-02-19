@@ -75,7 +75,7 @@ const LoginContainer: React.FC = () => {
 
   return (
     <>
-      {newPassword && passwordPolicy? (
+      {newPassword ? (
         <ChangePassword
           changePassword={handleChangePassword}
           passwordPolicyPayload={passwordPolicy}
