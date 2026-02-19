@@ -42,7 +42,7 @@ const AddRoleContainer: React.FC = () => {
         if (id) {
             dispatch(fetchRoleById(id));
         }
-    }, [dispatch]);
+    }, [dispatch,id]);
     return (
         <>
             <Breadcrumb style={{ marginBottom: 16 }}>

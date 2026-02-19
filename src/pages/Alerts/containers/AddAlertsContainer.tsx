@@ -46,7 +46,7 @@ const AddAlertsContainer: React.FC = () => {
       <Skeleton loading={loading} active>
         <AlertsView
           onFinish={handleSubmit}
-          initialData={individualAlert && individualAlert}
+          initialData={id ? individualAlert : undefined}
           contracts={contracts}
 
         />
