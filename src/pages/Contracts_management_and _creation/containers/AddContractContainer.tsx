@@ -10,23 +10,18 @@ const AddContractContainer: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>();
-  console.log({ id })
   const { individualContract, loading } = useAppSelector((state) => state.contracts);
-  console.log({ individualContract })
 
   const handleSubmit = async (values: CreateContractPayload | UpdateContractPayload) => {
     try {
-      console.log('Dispatching updateUser with:', values);
       if (id) {
-        const result = await dispatch(updateContract({ values, id: id })).unwrap();
-        console.log('Update result:', result);
-        message.success('User updated successfully')
+        await dispatch(updateContract({ values, id: id })).unwrap();
+        message.success('Contract updated successfully')
         navigate('/contracts');
         return
       } else {
-        const result = await dispatch(createContract(values as CreateContractPayload)).unwrap();
-        console.log('Create result:', result);
-        message.success('User created successfully');
+        await dispatch(createContract(values as CreateContractPayload)).unwrap();
+        message.success('Contract created successfully');
         navigate('/contracts');
 
         return
@@ -34,7 +29,6 @@ const AddContractContainer: React.FC = () => {
 
     } catch (err) {
       console.error('Caught error:', err);
-      message.error(`Failed to ${id ? 'update' : 'create'} contract`);
     }
   };
 
@@ -42,7 +36,6 @@ const AddContractContainer: React.FC = () => {
   useEffect(() => {
     if (id) {
       dispatch(fetchContractById(id));
-      console.log('Edit mode for contract id:', id);
     }
   }, [dispatch, id]);
 
@@ -53,7 +46,7 @@ const AddContractContainer: React.FC = () => {
         <AddContact
           onSave={handleSubmit}
           onCancel={() => { }}
-          initialData={individualContract && individualContract}
+          initialData={id?individualContract && individualContract:null}
 
         />
 

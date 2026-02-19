@@ -9,24 +9,19 @@ const AddAlertsContainer: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>();
-  console.log({ id })
   const { individualAlert, loading, contracts } = useAppSelector((state) => state.alerts);
-  console.log({ contracts })
-  console.log({ individualAlert })
+ 
 
   const handleSubmit = async (values: CreateContractAlertPayload | UpdateContractAlertPayload) => {
     try {
-      console.log('Dispatching updateUser with:', values);
       if (id) {
-        const result = await dispatch(updateAlert({ values, id: id })).unwrap();
-        console.log('Update result:', result);
-        message.success('User updated successfully')
+       await dispatch(updateAlert({ values, id: id })).unwrap();
+        message.success('Alert updated successfully')
         navigate('/alerts');
         return
       } else {
-        const result = await dispatch(createAlert(values as CreateContractAlertPayload)).unwrap();
-        console.log('Create result:', result);
-        message.success('User created successfully');
+        await dispatch(createAlert(values as CreateContractAlertPayload)).unwrap();
+        message.success('Alert created successfully');
         navigate('/alerts');
 
         return
@@ -34,7 +29,6 @@ const AddAlertsContainer: React.FC = () => {
 
     } catch (err) {
       console.error('Caught error:', err);
-      message.error(`Failed to ${id ? 'update' : 'create'} alert`);
     }
   };
 
@@ -43,7 +37,6 @@ const AddAlertsContainer: React.FC = () => {
     dispatch(fetchContractsForAlerts())
     if (id) {
       dispatch(fetchAlertById(id));
-      console.log('Edit mode for alert id:', id);
     }
   }, [dispatch, id]);
 

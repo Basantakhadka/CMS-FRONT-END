@@ -8,6 +8,7 @@ import { setNewPassword } from "../../../store/slices/newPasswordSlice";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import ChangePassword from "../components/ChangePassword";
 import { fetchPasswordPolicy } from "../../../store/slices/generalSlice";
+import { authService } from "../services/authService";
 
 interface LoginFormValues {
   username: string;
@@ -22,12 +23,9 @@ const LoginContainer: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const { newPassword } = useAppSelector((state) => state.newPassword);
-  console.log({newPassword})
   const passwordPolicy = useAppSelector(
     (state) => state.general.passwordPolicy
   );
-
-  console.log({passwordPolicy})
   /* LOGIN SUBMIT */
   const handleSubmit = async (values: LoginFormValues) => {
     setLoading(true);
@@ -39,17 +37,16 @@ const LoginContainer: React.FC = () => {
       if (loginInfo?.accessToken && !loginInfo?.enforcePasswordChange) {
         message.success("Login successful!");
         navigate("/dashboard");
-      } 
+      }
       else if (loginInfo?.enforcePasswordChange) {
         dispatch(setNewPassword(true));
-      } 
+      }
       else {
-        message.error("Invalid username or password");
+        console.log("Invalid username or password");
       }
 
     } catch (error) {
       console.error(error);
-      message.error("Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -57,29 +54,20 @@ const LoginContainer: React.FC = () => {
 
   /* CHANGE PASSWORD SUBMIT */
   const handleChangePassword = async (values: any) => {
-    console.log("Change Password Payload:", values);
-    // call API here later
+    setLoading(true);
+
+    try {
+      await authService.changePassword(values);
+      navigate("/login"); 
+
+    } catch (error: any) {
+      console.error("Change password error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  /* SHOW LOADER WHILE PASSWORD POLICY LOADS */
-  // if (newPassword ) {
-  //   return (
-  //     <div
-  //       style={{
-  //         height: "80vh",
-  //         display: "flex",
-  //         justifyContent: "center",
-  //         alignItems: "center",
-  //       }}
-  //     >
-  //       <Spin size="large" tip="Preparing password setup..." />
-  //     </div>
-  //   );
-  // }
 
-  /* MAIN RENDER */
-
-   /* FETCH POLICY ONLY ONCE */
   useEffect(() => {
     if (newPassword) dispatch(fetchPasswordPolicy());
   }, [dispatch]);
@@ -87,7 +75,7 @@ const LoginContainer: React.FC = () => {
 
   return (
     <>
-      {newPassword ? (
+      {newPassword && passwordPolicy? (
         <ChangePassword
           changePassword={handleChangePassword}
           passwordPolicyPayload={passwordPolicy}

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState } from 'react';
 import { PERMISSION_KEY, JWT_TOKEN, BASE_URL } from '../constants';
 import { getLocalStorage, setLocalStorage, clearLocalStorage } from '../utils/storageUtils'
 import axios from 'axios';
+import { message } from 'antd';
 
 interface User {
   username: string;
@@ -29,7 +30,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await axios.post(`${ BASE_URL }/auth/login`, credentials);
       if (response) {
         // Save token and user info
-        console.log('Login successful', response);
         setLocalStorage("username", credentials.username);
         setLocalStorage(JWT_TOKEN, response?.data?.data?.loginInfo?.accessToken);
         setLocalStorage(PERMISSION_KEY, response?.data?.data?.loginInfo?.permissions);
@@ -39,6 +39,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return response;
       }
     } catch (error: any) {
+      message.error(
+        error?.response?.data?.data?.message ||
+        error?.message ||
+        "Login failed. Please try again."
+      );
       console.error('Login failed', error);
       return error;
     }

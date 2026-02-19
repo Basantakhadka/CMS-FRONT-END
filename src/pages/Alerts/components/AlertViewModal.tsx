@@ -29,7 +29,7 @@ const AlertViewModal: React.FC<ViewContractAlertModalProps> = ({ visible, alert,
       width={700}
     >
       <Descriptions column={1} bordered>
-        <Descriptions.Item label="Contract ID">{alert.contractId}</Descriptions.Item>
+        <Descriptions.Item label="Contract Title">{alert.title}</Descriptions.Item>
         <Descriptions.Item label="Trigger Expiry">{alert.triggerExpiry ? 'Yes' : 'No'}</Descriptions.Item>
         <Descriptions.Item label="Enable Custom">{alert.enableCustom ? 'Yes' : 'No'}</Descriptions.Item>
         <Descriptions.Item label="Reminder Interval">{alert.reminderInterval || 'N/A'}</Descriptions.Item>

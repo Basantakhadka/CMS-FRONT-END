@@ -13,10 +13,8 @@ const ContractContainer: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate()
   const { contracts, loading, pageInfo } = useAppSelector((state) => state.contracts);
-  console.log({ contracts })
   const [reload, setReload] = useState(false);
   const [viewModalVisible, setViewModalVisible] = useState(false);
-  console.log({ viewModalVisible })
   const [selectedContract, setSelectedContract] = useState<any | null>(null);
 
 
@@ -47,7 +45,7 @@ const ContractContainer: React.FC = () => {
       setReload(prev => !prev);
       return
     } catch (err) {
-      message.error('Failed to delete contract');
+      console.log('Failed to delete contract');
     }
   };
 

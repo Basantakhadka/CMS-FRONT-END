@@ -35,7 +35,7 @@ const RolesContainer: React.FC = () => {
       message.success('Role deleted successfully');
       setReload(prev => !prev);
     } catch (err) {
-      message.error('Failed to delete role');
+      console.log('Failed to delete role');
     }
   };
 

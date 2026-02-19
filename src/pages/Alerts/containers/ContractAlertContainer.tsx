@@ -46,7 +46,7 @@ const ContractAlertContainer: React.FC = () => {
       setReload(prev => !prev);
       return
     } catch (err) {
-      message.error('Failed to delete alert');
+      console.log('Failed to delete alert');
     }
   };
 

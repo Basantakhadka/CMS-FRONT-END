@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Form, Input, Button, Space, Checkbox, Divider } from "antd";
+import { useParams } from "react-router-dom";
 
 interface PermissionChild {
     key: string;
@@ -24,6 +25,7 @@ const AddRoleForm: React.FC<AddRoleFormProps> = ({
     selectedRole,
 }) => {
     const [form] = Form.useForm();
+    const {id}=useParams<{ id: string }>()
 
     // Single source of truth for permissions
     const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
@@ -154,7 +156,7 @@ const AddRoleForm: React.FC<AddRoleFormProps> = ({
             {/* SUBMIT BUTTON */}
             <Form.Item style={{ textAlign: "right" }}>
                 <Button type="primary" onClick={submitForm}>
-                    {selectedRole ? "Update Role" : "Create Role"}
+                    {id ? "Update Role" : "Create Role"}
                 </Button>
             </Form.Item>
         </Form>
