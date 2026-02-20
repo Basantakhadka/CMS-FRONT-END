@@ -6,7 +6,6 @@ import {
   MenuUnfoldOutlined,
   DashboardOutlined,
   UserOutlined,
-  SettingOutlined,
   LogoutOutlined,
   SecurityScanOutlined,
   SafetyOutlined,
@@ -17,6 +16,10 @@ import {
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './MainLayout.css';
+import { DASHBOARD, CONTRACTS, IAM_GENERAL_PASSWORDPOLICY, IAM_USERS_LIST, ALERTS, ALERTS_LIST } from '../../constants/PermissionConfig';
+import { PERMISSION_KEY } from '../../constants';
+import { getLocalStorage } from '../../utils/storageUtils';
+import AuthRoute from './AuthRoute';
 
 // Lazy load module routes
 const DashboardRoutes = lazy(() => import('../../pages/Dashboard'));
@@ -24,7 +27,6 @@ const IdentityAccessRoutes = lazy(() => import('../../pages/IdentityAccess'));
 const SettingsRoutes = lazy(() => import('../../pages/Settings'));
 const AlertsRoutes = lazy(() => import('../../pages/Alerts'));
 const ContractsView = lazy(() => import('../../pages/Contracts_management_and _creation'));
-
 
 const { Header, Sider, Content } = Layout;
 
@@ -38,35 +40,39 @@ const MainLayout: React.FC = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  // Handle responsive behavior
+  const permissions: string[] = getLocalStorage(PERMISSION_KEY) || [];
+
+  const hasPermission = (key: string) => {
+    return permissions?.some((perm: string) => perm === key || perm.startsWith(key + ':'));
+  };
+
+  // Handle responsive sidebar
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
-      if (mobile) {
-        setCollapsed(true);
-      }
+      if (mobile) setCollapsed(true);
     };
-
 
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const menuItems = [
+  // Sidebar menu items
+  const menuItems: any[] = [
     {
       key: '/dashboard',
       icon: <DashboardOutlined />,
       label: 'Dashboard',
+      rights: [DASHBOARD],
     },
-
     {
       key: '/contracts',
       icon: <FileTextOutlined />,
       label: 'Contracts',
+      rights: [CONTRACTS],
     },
-
     {
       key: 'identity-access',
       icon: <SecurityScanOutlined />,
@@ -76,34 +82,50 @@ const MainLayout: React.FC = () => {
           key: '/iam/general',
           icon: <SafetyOutlined />,
           label: 'General',
+          rights: [IAM_GENERAL_PASSWORDPOLICY],
         },
         {
           key: '/iam/users',
           icon: <UserOutlined />,
           label: 'Users',
+          rights: [IAM_USERS_LIST],
         },
         {
           key: '/iam/roles',
           icon: <TeamOutlined />,
           label: 'Roles',
+          rights: [IAM_USERS_LIST],
         },
       ],
     },
-
-
     {
       key: '/alerts',
       icon: <AlertOutlined />,
       label: 'Alerts',
+      rights: [ALERTS, ALERTS_LIST],
     },
-
-    // {
-    //   key: '/settings',
-    //   icon: <SettingOutlined />,
-    //   label: 'Settings',
-    // }
-
   ];
+
+  // Filter menu items based on permissions
+  const filteredMenuItems = menuItems
+    .map((item) => {
+      if (item.children) {
+        const filteredChildren = item.children.filter((child:any) =>
+          child.rights?.some((right: string) => hasPermission(right))
+        );
+        if (filteredChildren.length > 0) return { ...item, children: filteredChildren };
+        return null;
+      } else {
+        return item.rights?.some((right: string) => hasPermission(right)) ? item : null;
+      }
+    })
+    .filter(Boolean);
+
+  // Handle sidebar navigation
+  const handleMenuClick = ({ key }: { key: string }) => {
+    navigate(key);
+    if (isMobile) setCollapsed(true);
+  };
 
   const handleLogout = () => {
     logout();
@@ -111,29 +133,10 @@ const MainLayout: React.FC = () => {
   };
 
   const userMenuItems: MenuProps['items'] = [
-    {
-      key: 'profile',
-      icon: <UserOutlined />,
-      label: 'Profile',
-    },
-    {
-      type: 'divider',
-    },
-    {
-      key: 'logout',
-      icon: <LogoutOutlined />,
-      label: 'Logout',
-      onClick: handleLogout,
-    },
+    { key: 'profile', icon: <UserOutlined />, label: 'Profile' },
+    { type: 'divider' },
+    { key: 'logout', icon: <LogoutOutlined />, label: 'Logout', onClick: handleLogout },
   ];
-
-  const handleMenuClick = ({ key }: { key: string }) => {
-    navigate(key);
-    // Close sidebar on mobile after navigation
-    if (isMobile) {
-      setCollapsed(true);
-    }
-  };
 
   return (
     <Layout style={{ minHeight: '100vh' }} className="main-layout">
@@ -146,44 +149,34 @@ const MainLayout: React.FC = () => {
         width={280}
         className={`layout-sider ${isMobile && !collapsed ? 'mobile-sider-open' : ''}`}
         style={{
-           height: '100vh',
-           position: 'fixed',
-           left: 0,
-           top: 0,
-           bottom: 0,
-           zIndex: isMobile ? 999 : 100,
-           background: '#000000', // Solid Black Background
-           boxShadow: '1px 0 0 0 rgba(255, 255, 255, 0.1)', // Subtle vertical divider
+          height: '100vh',
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          bottom: 0,
+          zIndex: isMobile ? 999 : 100,
+          background: '#000',
+          boxShadow: '1px 0 0 0 rgba(255,255,255,0.1)',
         }}
       >
-        <div style={{ 
-          height: '100%', 
-          display: 'flex', 
-          flexDirection: 'column' 
-        }}>
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
           <div
             style={{
-             height: 60,
-             margin: '24px 16px',
-             display: 'flex',
-             alignItems: 'center',
-             justifyContent: 'center',
-             transition: 'all 0.3s ease',
+              height: 60,
+              margin: '24px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               flexShrink: 0,
               backgroundColor: collapsed ? 'transparent' : 'white',
             }}
           >
             {collapsed ? (
-              <img 
-                src="/unnamed.jpg" 
-                alt="Logo" 
-                style={{ height: '40px', width: 'auto' }} 
-              />
+              <img src="/unnamed.jpg" alt="Logo" style={{ height: '40px', width: 'auto' }} />
             ) : (
-
-                <Typography.Text strong style={{ fontSize: '26px', color: 'black' }}>
-                  ClauseHQ
-                </Typography.Text>
+              <Typography.Text strong style={{ fontSize: '26px', color: 'black' }}>
+                ClauseHQ
+              </Typography.Text>
             )}
           </div>
           <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', minHeight: 0 }}>
@@ -191,17 +184,16 @@ const MainLayout: React.FC = () => {
               theme="dark"
               mode="inline"
               selectedKeys={[location.pathname]}
-              items={menuItems}
+              items={filteredMenuItems}
               onClick={handleMenuClick}
             />
           </div>
-          {/* Sidebar Footer */}
           <div
             style={{
               padding: collapsed ? '12px 8px' : '16px',
-              borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-              background: 'rgba(0, 0, 0, 0.2)',
-              color: 'rgba(255, 255, 255, 0.65)',
+              borderTop: '1px solid rgba(255,255,255,0.1)',
+              background: 'rgba(0,0,0,0.2)',
+              color: 'rgba(255,255,255,0.65)',
               fontSize: '12px',
               textAlign: 'center',
               flexShrink: 0,
@@ -209,7 +201,7 @@ const MainLayout: React.FC = () => {
           >
             {!collapsed && (
               <>
-                <div style={{ fontWeight: 600, marginBottom: '4px', color: 'rgba(255, 255, 255, 0.85)' }}>
+                <div style={{ fontWeight: 600, marginBottom: '4px', color: 'rgba(255,255,255,0.85)' }}>
                   ClauseHQ v1.0.0
                 </div>
                 <div>© 2026 All rights reserved</div>
@@ -219,16 +211,10 @@ const MainLayout: React.FC = () => {
           </div>
         </div>
       </Sider>
-      
-      {/* Mobile overlay */}
-      {isMobile && !collapsed && (
-        <div
-          className="sidebar-overlay"
-          onClick={() => setCollapsed(true)}
-        />
-      )}
-      
-      <Layout style={{ marginLeft: isMobile ? 0 : (collapsed ? 80 : 280), transition: 'margin-left 0.2s' }}>
+
+      {isMobile && !collapsed && <div className="sidebar-overlay" onClick={() => setCollapsed(true)} />}
+
+      <Layout style={{ marginLeft: isMobile ? 0 : collapsed ? 80 : 280, transition: 'margin-left 0.2s' }}>
         <Header
           style={{
             padding: '0 16px',
@@ -240,7 +226,7 @@ const MainLayout: React.FC = () => {
             position: 'fixed',
             top: 0,
             right: 0,
-            left: isMobile ? 0 : (collapsed ? 80 : 280),
+            left: isMobile ? 0 : collapsed ? 80 : 280,
             zIndex: 99,
             transition: 'left 0.2s',
           }}
@@ -249,13 +235,8 @@ const MainLayout: React.FC = () => {
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
-            style={{
-              fontSize: '16px',
-              width: 64,
-              height: 64,
-            }}
+            style={{ fontSize: '16px', width: 64, height: 64 }}
           />
-          
           <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
             <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '8px' }}>
               <Avatar icon={<UserOutlined />} style={{ backgroundColor: '#1890ff' }} />
@@ -263,6 +244,7 @@ const MainLayout: React.FC = () => {
             </div>
           </Dropdown>
         </Header>
+
         <Content
           className="layout-content"
           style={{
@@ -273,7 +255,7 @@ const MainLayout: React.FC = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          <Suspense 
+          <Suspense
             fallback={
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
                 <Spin size="large" tip="Loading..." />
@@ -281,12 +263,27 @@ const MainLayout: React.FC = () => {
             }
           >
             <Routes>
-              <Route path="/dashboard/*" element={<DashboardRoutes />} />
-              <Route path="/contracts/*" element={<ContractsView />} />
-              <Route path="/iam/*" element={<IdentityAccessRoutes />} />
-              <Route path="/settings/*" element={<SettingsRoutes />} />
-              <Route path="/alerts/*" element={<AlertsRoutes />} />
-              <Route path="/" element={<DashboardRoutes />} />
+              <Route
+                path="/dashboard/*"
+                element={<AuthRoute isAuthorized={hasPermission('dashboard')} element={<DashboardRoutes />} />}
+              />
+              <Route
+                path="/contracts/*"
+                element={<AuthRoute isAuthorized={hasPermission('contracts')} element={<ContractsView />} />}
+              />
+              <Route
+                path="/iam/*"
+                element={<AuthRoute isAuthorized={hasPermission('iam')} element={<IdentityAccessRoutes />} />}
+              />
+              <Route
+                path="/settings/*"
+                element={<AuthRoute isAuthorized={hasPermission('settings')} element={<SettingsRoutes />} />}
+              />
+              <Route
+                path="/alerts/*"
+                element={<AuthRoute isAuthorized={hasPermission('alerts')} element={<AlertsRoutes />} />}
+              />
+              <Route path="/" element={<AuthRoute isAuthorized={true} element={<DashboardRoutes />} />} />
             </Routes>
           </Suspense>
         </Content>
