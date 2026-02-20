@@ -6,7 +6,7 @@ import {
 import {
     FileTextOutlined, UserOutlined, LinkOutlined,
     DollarOutlined, GlobalOutlined, SaveOutlined,
-     HomeOutlined, PlusOutlined, MinusCircleOutlined
+    HomeOutlined, PlusOutlined, MinusCircleOutlined
 } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
 import { useNavigate } from 'react-router-dom';
@@ -20,6 +20,7 @@ export interface Contract {
     type: string;
     parties: string[];
     expiryDate: string; // ISO string
+    contractDate: string; // ISO string
     documentLink?: string;
     contractValue?: string;
     renewalTerms?: string;
@@ -37,7 +38,7 @@ interface AddContractProps {
 const AddContract: React.FC<AddContractProps> = ({ onSave, onCancel, initialData = null }) => {
     const [form] = Form.useForm();
     const [parties, setParties] = useState<string[]>(initialData?.parties || ['']);
-    const navigate= useNavigate()
+    const navigate = useNavigate()
 
     const handleAddParty = () => setParties([...parties, '']);
     const handleRemoveParty = (index: number) => {
@@ -65,6 +66,7 @@ const AddContract: React.FC<AddContractProps> = ({ onSave, onCancel, initialData
                 type: values.type,
                 parties: filteredParties,
                 expiryDate: (values.expiryDate as Dayjs).toISOString(),
+                contractDate: (values.contractDate as Dayjs).toISOString(),
                 documentLink: values.documentLink || '',
                 contractValue: values.contractValue || '',
                 renewalTerms: values.renewalTerms || '',
@@ -88,14 +90,15 @@ const AddContract: React.FC<AddContractProps> = ({ onSave, onCancel, initialData
                 <Breadcrumb.Item>{initialData ? 'Edit Contract' : 'Add Contract'}</Breadcrumb.Item>
             </Breadcrumb>
 
-            <Card style={{ height:'80vh', padding: '20px 20px 20px 0px' }}>
+            <Card style={{ height: '80vh', padding: '20px 20px 20px 0px', overflowY:'auto' }}>
                 <Form
                     form={form}
                     layout="vertical"
                     style={{ width: '60%' }}
-                    initialValues={initialData ? { 
-                        ...initialData, 
+                    initialValues={initialData ? {
+                        ...initialData,
                         expiryDate: dayjs(initialData?.expiryDate),
+                        contractDate: dayjs(initialData?.contractDate),
                         documentLink: initialData?.documentLink || ''
                     } : {}}
                     size="middle"
@@ -155,20 +158,34 @@ const AddContract: React.FC<AddContractProps> = ({ onSave, onCancel, initialData
                         </Button>
                     </Form.Item>
 
-                    {/* Expiry Date */}
+
+                    <Form.Item
+                        label="Contract Date"
+                        name="contractDate"
+                        rules={[
+                            { required: true, message: 'Please select contract date' },
+                            {
+                                validator: (_, value) => {
+                                    if (value && value.isAfter(dayjs(), 'day')) {
+                                        return Promise.reject('Contract date cannot be in the future');
+                                    }
+                                    return Promise.resolve();
+                                }
+                            }
+                        ]}
+                    >
+                        <DatePicker
+                            style={{ width: '100%' }}
+                            format="MMMM DD, YYYY"
+                            disabledDate={(current) => current && current > dayjs().endOf('day')}
+                        />
+                    </Form.Item>
                     <Form.Item
                         label="Expiry Date"
                         name="expiryDate"
                         rules={[
                             { required: true, message: 'Please select expiry date' },
-                            {
-                                validator: (_, value) => {
-                                    if (value && (value as Dayjs).isBefore(dayjs(), 'day')) {
-                                        return Promise.reject('Expiry date must be in the future');
-                                    }
-                                    return Promise.resolve();
-                                }
-                            }
+                           
                         ]}
                     >
                         <DatePicker
@@ -203,9 +220,11 @@ const AddContract: React.FC<AddContractProps> = ({ onSave, onCancel, initialData
 
                     {/* Renewal Terms */}
                     <Form.Item label="Renewal Terms" name="renewalTerms">
-                        <Input placeholder="e.g., Auto-renewal with 30 days notice" />
+                        <Select placeholder="Select renewal type">
+                            <Select.Option value="Manual">Manual</Select.Option>
+                            <Select.Option value="Auto">Auto</Select.Option>
+                        </Select>
                     </Form.Item>
-
                     {/* Governing Law */}
                     <Form.Item label="Governing Law" name="governingLaw">
                         <Input placeholder="e.g., New York State Law" />
@@ -213,19 +232,19 @@ const AddContract: React.FC<AddContractProps> = ({ onSave, onCancel, initialData
 
                     {/* Form Actions */}
                     <Divider />
-                   
+
                 </Form>
 
-                  <Form.Item style={{ float: 'right' }}>
-                        <Space>
-                            <Button type="primary" icon={<SaveOutlined />} onClick={handleSubmit}>
-                                {initialData ? 'Update Contract' : 'Create Contract'}
-                            </Button>
-                        </Space>
-                    </Form.Item>
-                
+                <Form.Item style={{ float: 'right' }}>
+                    <Space>
+                        <Button type="primary" icon={<SaveOutlined />} onClick={handleSubmit}>
+                            {initialData ? 'Update Contract' : 'Create Contract'}
+                        </Button>
+                    </Space>
+                </Form.Item>
+
             </Card>
-           
+
         </>
     );
 };
