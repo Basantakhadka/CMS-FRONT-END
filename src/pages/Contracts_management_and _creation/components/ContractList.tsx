@@ -76,11 +76,16 @@ interface Contract {
     dataIndex: 'expiryDate',
     key: 'expiryDate',
   },
+   {
+    title: 'Contract Date',
+    dataIndex: 'contractDate',
+    key: 'contractDate',
+  },
   {
     title: 'Contract Value',
     dataIndex: 'contractValue',
     key: 'contractValue',
-    render: (value: string) => `$${parseFloat(value).toLocaleString()}`,
+    render: (value: string) => `${parseFloat(value).toLocaleString()}`,
   },
   {
     title: 'Jurisdiction',

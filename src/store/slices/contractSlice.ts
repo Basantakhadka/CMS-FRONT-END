@@ -4,7 +4,8 @@ export interface CreateContractPayload {
   title: string;               // Contract title
   type: string;                // Contract type
   parties: string[];           // Array of parties involved
-  expiryDate: string;          // ISO string
+  expiryDate: string;  
+  contractDate: string;        // ISO string
   documentLink: string;        // Document URL
   contractValue?: number;      // Optional contract value
   jurisdiction?: string;       // Optional
@@ -19,6 +20,7 @@ export interface UpdateContractPayload {
   type?: string;
   parties?: string[];
   expiryDate?: string;
+  contractDate?: string;      // Optional, update only if provided
   documentLink?: string;
   contractValue?: number;
   jurisdiction?: string;
