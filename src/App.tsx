@@ -5,6 +5,7 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import MainLayout from './components/Layout/MainLayout';
 import './App.css';
+import ProfileRoutes from './pages/Profile';
 
 // Lazy load page modules
 const AuthRoutes = lazy(() => import('./pages/Auth'));
@@ -33,6 +34,7 @@ function App() {
               {/* Auth Routes */}
               <Route path="/auth/*" element={<AuthRoutes />} />
               <Route path="/login" element={<Navigate to="/auth/login" replace />} />
+          
 
 
               {/* Protected Routes - All app routes through MainLayout */}

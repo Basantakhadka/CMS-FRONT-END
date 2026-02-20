@@ -17,6 +17,7 @@ import {
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './MainLayout.css';
+import ProfileRoutes from '../../pages/Profile';
 
 // Lazy load module routes
 const DashboardRoutes = lazy(() => import('../../pages/Dashboard'));
@@ -115,6 +116,7 @@ const MainLayout: React.FC = () => {
       key: 'profile',
       icon: <UserOutlined />,
       label: 'Profile',
+      onClick: () => navigate('/profile'),
     },
     {
       type: 'divider',
@@ -256,7 +258,7 @@ const MainLayout: React.FC = () => {
             }}
           />
           
-          <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+          <Dropdown menu={{ items: userMenuItems }}  placement="bottomRight">
             <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '8px' }}>
               <Avatar icon={<UserOutlined />} style={{ backgroundColor: '#1890ff' }} />
               <span style={{ display: isMobile ? 'none' : 'inline' }}>{user?.username}</span>
@@ -287,6 +289,7 @@ const MainLayout: React.FC = () => {
               <Route path="/settings/*" element={<SettingsRoutes />} />
               <Route path="/alerts/*" element={<AlertsRoutes />} />
               <Route path="/" element={<DashboardRoutes />} />
+               <Route path="/profile/*" element={<ProfileRoutes />} />
             </Routes>
           </Suspense>
         </Content>
