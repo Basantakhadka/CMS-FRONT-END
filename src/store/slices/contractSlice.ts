@@ -6,7 +6,11 @@ export interface CreateContractPayload {
   parties: string[];           // Array of parties involved
   expiryDate: string;  
   contractDate: string;        // ISO string
-  documentLink: string;        // Document URL
+  documentLink: string;  
+    scopeOfWork?:string,
+    amendmentDate?:string,
+    amendmentLink?:string,
+    terminationNoticeDays?:any,      // Document URL
   contractValue?: number;      // Optional contract value
   jurisdiction?: string;       // Optional
   renewalTerms?: string;       // Optional
@@ -20,6 +24,10 @@ export interface UpdateContractPayload {
   type?: string;
   parties?: string[];
   expiryDate?: string;
+    scopeOfWork?:string,
+    amendmentDate?:string,
+    amendmentLink?:string,
+    terminationNoticeDays?:any,
   contractDate?: string;      // Optional, update only if provided
   documentLink?: string;
   contractValue?: number;

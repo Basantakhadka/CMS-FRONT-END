@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
     Form, Input, Select, DatePicker, Button, Card, Space,
-    Divider, Row, Col, message, Breadcrumb, Tooltip
+    Divider, Row, Col, message, Breadcrumb, Tooltip,
 } from 'antd';
 import {
     FileTextOutlined, UserOutlined, LinkOutlined,
@@ -23,6 +23,10 @@ export interface Contract {
     contractDate: string; // ISO string
     documentLink?: string;
     contractValue?: string;
+    scopeOfWork?:string,
+    amendmentDate?:string,
+    amendmentLink?:string,
+    terminationNoticeDays?:any,
     renewalTerms?: string;
     governingLaw?: string;
     jurisdiction?: string
@@ -68,6 +72,10 @@ const AddContract: React.FC<AddContractProps> = ({ onSave, onCancel, initialData
                 expiryDate: (values.expiryDate as Dayjs).toISOString(),
                 contractDate: (values.contractDate as Dayjs).toISOString(),
                 documentLink: values.documentLink || '',
+                scopeOfWork:values.scopeOfWork,
+                amendmentDate:values.amendmentDate,
+                amendmentLink:values.amendmentLink,
+                terminationNoticeDays:values.terminationNoticeDays,
                 contractValue: values.contractValue || '',
                 renewalTerms: values.renewalTerms || '',
                 governingLaw: values.governingLaw || '',
@@ -90,7 +98,7 @@ const AddContract: React.FC<AddContractProps> = ({ onSave, onCancel, initialData
                 <Breadcrumb.Item>{initialData ? 'Edit Contract' : 'Add Contract'}</Breadcrumb.Item>
             </Breadcrumb>
 
-            <Card style={{ height: '80vh', padding: '20px 20px 20px 0px', overflowY:'auto' }}>
+            <Card style={{ height: '80vh', padding: '20px 20px 20px 0px', overflowY: 'auto' }}>
                 <Form
                     form={form}
                     layout="vertical"
@@ -99,7 +107,9 @@ const AddContract: React.FC<AddContractProps> = ({ onSave, onCancel, initialData
                         ...initialData,
                         expiryDate: dayjs(initialData?.expiryDate),
                         contractDate: dayjs(initialData?.contractDate),
-                        documentLink: initialData?.documentLink || ''
+                        amendmentDate:dayjs(initialData?.amendmentDate),
+                        documentLink: initialData?.documentLink || '',
+                        amendmentLink:initialData?.amendmentLink
                     } : {}}
                     size="middle"
                 >
@@ -126,6 +136,14 @@ const AddContract: React.FC<AddContractProps> = ({ onSave, onCancel, initialData
                             <Option value="One-time">One-time</Option>
                             <Option value="Other">Other</Option>
                         </Select>
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Scope of Work"
+                        name="scopeOfWork"
+                        rules={[{ required: true, message: "Please enter scope of work" }]}
+                    >
+                        <Input placeholder="Enter scope of work" />
                     </Form.Item>
 
                     {/* Parties */}
@@ -185,7 +203,7 @@ const AddContract: React.FC<AddContractProps> = ({ onSave, onCancel, initialData
                         name="expiryDate"
                         rules={[
                             { required: true, message: 'Please select expiry date' },
-                           
+
                         ]}
                     >
                         <DatePicker
@@ -202,6 +220,28 @@ const AddContract: React.FC<AddContractProps> = ({ onSave, onCancel, initialData
                         rules={[{ required: true, message: 'Please enter document link' }]}
                     >
                         <Input placeholder="https://drive.google.com/..." prefix={<LinkOutlined />} />
+                    </Form.Item>
+
+
+                    {/* Amendment Date */}
+                    <Form.Item
+                        label="Amendment Date"
+                        name="amendmentDate"
+                    >
+                        <DatePicker style={{ width: '100%' }}
+                            format="MMMM DD, YYYY" />
+                    </Form.Item>
+
+
+                    {/* Amendment Link */}
+                    <Form.Item
+                        label="Amendment Link"
+                        name="amendmentLink"
+                        rules={[
+                            { type: "url", message: "Enter valid URL" }
+                        ]}
+                    >
+                        <Input placeholder="https://example.com" />
                     </Form.Item>
 
                     {/* Contract Value & Jurisdiction */}
@@ -224,6 +264,18 @@ const AddContract: React.FC<AddContractProps> = ({ onSave, onCancel, initialData
                             <Select.Option value="Manual">Manual</Select.Option>
                             <Select.Option value="Auto">Auto</Select.Option>
                         </Select>
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Termination Policy (Prior Notice Days)"
+                        name="terminationNoticeDays"
+                        rules={[{ required: true, message: "Please enter notice period" }]}
+                    >
+                        <Input
+                            
+                            style={{ width: "100%" }}
+                            placeholder="Enter number of days"
+                        />
                     </Form.Item>
                     {/* Governing Law */}
                     <Form.Item label="Governing Law" name="governingLaw">

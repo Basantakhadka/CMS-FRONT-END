@@ -26,14 +26,25 @@ const ContractViewModal: React.FC<ViewContractModalProps> = ({ visible, contract
       <Descriptions column={1} bordered>
         <Descriptions.Item label="Title">{contract.title}</Descriptions.Item>
         <Descriptions.Item label="Type">{contract.type}</Descriptions.Item>
+         <Descriptions.Item label="Scope of Work">{contract.scopeOfWork}</Descriptions.Item>
         <Descriptions.Item label="Parties">
           {contract.parties.join(', ')}
         </Descriptions.Item>
         <Descriptions.Item label="Expiry Date">{new Date(contract.expiryDate).toLocaleString()}</Descriptions.Item>
-        <Descriptions.Item label="Document">
+        <Descriptions.Item label="Amendment Date">{new Date(contract.amendmentDate).toLocaleString()}</Descriptions.Item>
+        <Descriptions.Item label="Contract Document">
           {contract.documentLink ? (
             <a href={contract.documentLink} target="_blank" rel="noopener noreferrer">
               <LinkOutlined /> View Document
+            </a>
+          ) : (
+            'N/A'
+          )}
+        </Descriptions.Item>
+         <Descriptions.Item label="Amendment Link">
+          {contract.amendmentLink ? (
+            <a href={contract.amendmentLink} target="_blank" rel="noopener noreferrer">
+              <LinkOutlined /> View Link
             </a>
           ) : (
             'N/A'
@@ -44,6 +55,7 @@ const ContractViewModal: React.FC<ViewContractModalProps> = ({ visible, contract
         </Descriptions.Item>
         <Descriptions.Item label="Jurisdiction">{contract.jurisdiction || 'N/A'}</Descriptions.Item>
         <Descriptions.Item label="Renewal Terms">{contract.renewalTerms || 'N/A'}</Descriptions.Item>
+          <Descriptions.Item label="Termination Policy (Prior Notice Days)">{contract?.terminationNoticeDays || 'N/A'}</Descriptions.Item>
         <Descriptions.Item label="Governing Law">{contract.governingLaw}</Descriptions.Item>
       </Descriptions>
     </Modal>
