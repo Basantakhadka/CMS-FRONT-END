@@ -5,6 +5,7 @@ import rolesReducer from './slices/rolesSlice';
 import contractReducer from './slices/contractSlice';
 import contractAlertReducer from './slices/contractAlertSlice';
 import newPasswordReducer from './slices/newPasswordSlice';
+import changeRequestReducer from './slices/changeRequestSlice';
 
 export const store = configureStore({
     reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
         users: usersReducer,
         roles: rolesReducer,
         contracts: contractReducer,
+        changeRequests: changeRequestReducer,
         alerts: contractAlertReducer,
         newPassword: newPasswordReducer,
         
