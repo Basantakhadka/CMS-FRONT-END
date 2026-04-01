@@ -9,10 +9,13 @@ import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import ChangePassword from "../components/ChangePassword";
 import { fetchPasswordPolicy } from "../../../store/slices/generalSlice";
 import { authService } from "../services/authService";
+import { setLocalStorage } from "../../../utils/storageUtils";
+import { CLIENT_CODE, CLIENT_NAME } from "../../../constants";
 
 interface LoginFormValues {
   username: string;
   password: string;
+  clientCode: string;
 }
 
 const LoginContainer: React.FC = () => {
@@ -33,9 +36,12 @@ const LoginContainer: React.FC = () => {
       const response = await login(values);
 
       const loginInfo = response?.data?.loginInfo;
+      console.log(loginInfo);
 
       if (loginInfo?.accessToken && !loginInfo?.enforcePasswordChange) {
         message.success("Login successful!");
+        setLocalStorage(CLIENT_CODE, loginInfo?.client?.code);
+        setLocalStorage(CLIENT_NAME, loginInfo?.client?.name);
         navigate("/dashboard");
       }
       else if (loginInfo?.enforcePasswordChange) {

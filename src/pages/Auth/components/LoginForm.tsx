@@ -8,6 +8,7 @@ const { Text } = Typography;
 interface LoginFormValues {
   username: string;
   password: string;
+  clientCode: string;
 }
 
 interface LoginFormProps {
@@ -49,6 +50,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading }) => {
               layout="vertical"
               size="large"
             >
+              <Form.Item
+                name="clientCode"
+                rules={[{ required: true, message: 'Please input client code!' }]}
+              >
+                <Input placeholder="Client Code" />
+              </Form.Item>
+
               <Form.Item
                 name="username"
                 rules={[{ required: true, message: 'Please input username!' }]}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import { Layout, Menu, Button, theme, Dropdown, Avatar, Spin, Typography } from 'antd';
+import { Layout, Menu, Button, theme, Dropdown, Avatar, Spin, Typography, Modal, Form, Input, message } from 'antd';
 import type { MenuProps } from 'antd';
 import {
   MenuFoldOutlined,
@@ -17,9 +17,18 @@ import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './MainLayout.css';
 import { DASHBOARD, CONTRACTS, IAM_GENERAL_PASSWORDPOLICY, IAM_USERS_LIST, ALERTS, ALERTS_LIST } from '../../constants/PermissionConfig';
-import { PERMISSION_KEY } from '../../constants';
-import { getLocalStorage } from '../../utils/storageUtils';
+import { PERMISSION_KEY, CLIENT_CODE, CLIENT_NAME } from '../../constants';
+import { getLocalStorage, setLocalStorage } from '../../utils/storageUtils';
+import { store } from '../../utils/httpUtil';
 import AuthRoute from './AuthRoute';
+
+const readLocalStorageValue = (key: string) => {
+  try {
+    return getLocalStorage(key);
+  } catch (error) {
+    return null;
+  }
+};
 
 // Lazy load module routes
 const DashboardRoutes = lazy(() => import('../../pages/Dashboard'));
@@ -33,6 +42,11 @@ const { Header, Sider, Content } = Layout;
 const MainLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [clientCode, setClientCode] = useState<string>(() => readLocalStorageValue(CLIENT_CODE) || '');
+  const [clientName, setClientName] = useState<string>(() => readLocalStorageValue(CLIENT_NAME) || '');
+  const [isClientModalVisible, setIsClientModalVisible] = useState(false);
+  const [savingClient, setSavingClient] = useState(false);
+  const [clientForm] = Form.useForm();
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
@@ -44,6 +58,38 @@ const MainLayout: React.FC = () => {
 
   const hasPermission = (key: string) => {
     return permissions?.some((perm: string) => perm === key || perm.startsWith(key + ':'));
+  };
+
+  const showAddClientButton = !clientCode || clientCode === '000';
+
+  const openClientModal = () => {
+    clientForm.setFieldsValue({
+      clientCode: clientCode === '000' ? '' : clientCode,
+      clientName: clientName || '',
+    });
+    setIsClientModalVisible(true);
+  };
+
+  const handleClientModalClose = () => {
+    setIsClientModalVisible(false);
+    clientForm.resetFields();
+  };
+
+  const handleClientSubmit = async (values: { clientCode: string; clientName: string }) => {
+    setSavingClient(true);
+    try {
+      await store('identity-access/clients', values);
+      message.success('Client details saved successfully');
+      handleClientModalClose();
+    } catch (error) {
+      const errMsg = 
+        (error as any)?.response?.data?.message ||
+        (error as any)?.message ||
+        'Failed to save client details';
+      message.error(errMsg);
+    } finally {
+      setSavingClient(false);
+    }
   };
 
   // Handle responsive sidebar
@@ -237,12 +283,24 @@ const MainLayout: React.FC = () => {
             onClick={() => setCollapsed(!collapsed)}
             style={{ fontSize: '16px', width: 64, height: 64 }}
           />
-          <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
-            <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '8px' }}>
-              <Avatar icon={<UserOutlined />} style={{ backgroundColor: '#1890ff' }} />
-              <span style={{ display: isMobile ? 'none' : 'inline' }}>{user?.username}</span>
-            </div>
-          </Dropdown>
+          <div className="header-actions">
+            {showAddClientButton && (
+              <Button
+                type="primary"
+                onClick={openClientModal}
+                className="add-client-btn"
+                size="middle"
+              >
+                Add Client
+              </Button>
+            )}
+            <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
+              <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '8px' }}>
+                <Avatar icon={<UserOutlined />} style={{ backgroundColor: '#1890ff' }} />
+                <span style={{ display: isMobile ? 'none' : 'inline' }}>{user?.username}</span>
+              </div>
+            </Dropdown>
+          </div>
         </Header>
 
         <Content
@@ -287,6 +345,36 @@ const MainLayout: React.FC = () => {
             </Routes>
           </Suspense>
         </Content>
+        <Modal
+          title="Add Client"
+          open={isClientModalVisible}
+          onCancel={handleClientModalClose}
+          footer={null}
+          destroyOnClose
+        >
+          <Form layout="vertical" form={clientForm} onFinish={handleClientSubmit}>
+            <Form.Item
+              label="Client Code"
+              name="clientCode"
+              rules={[{ required: true, message: 'Please enter client code' }]}
+            >
+              <Input placeholder="Enter client code" />
+            </Form.Item>
+            <Form.Item
+              label="Client Name"
+              name="clientName"
+              rules={[{ required: true, message: 'Please enter client name' }]}
+            >
+              <Input placeholder="Enter client name" />
+            </Form.Item>
+            <div className="modal-actions">
+              <Button onClick={handleClientModalClose}>Cancel</Button>
+              <Button type="primary" htmlType="submit" loading={savingClient}>
+                Save Client
+              </Button>
+            </div>
+          </Form>
+        </Modal>
       </Layout>
     </Layout>
   );
