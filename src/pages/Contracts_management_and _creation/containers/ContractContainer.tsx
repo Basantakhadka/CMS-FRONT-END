@@ -63,7 +63,6 @@ const ContractContainer: React.FC = () => {
 
   return (
     <>
-      <h2>Contract Management</h2>
       <div style={{ padding: '24px 24px 24px 0px' }}>
         <ContractList
           contracts={contracts}
