@@ -5,3 +5,5 @@ export const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export const LOCAL_STORAGE_PREFIX = 'cms-portal';
 export const JWT_TOKEN = 'token';
 export const PERMISSION_KEY = 'platform-permission';
+export const CLIENT_CODE = 'client-code';
+export const CLIENT_NAME = 'client-name';

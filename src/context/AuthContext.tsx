@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import { PERMISSION_KEY, JWT_TOKEN, BASE_URL } from '../constants';
+import { PERMISSION_KEY, JWT_TOKEN, BASE_URL, CLIENT_CODE, CLIENT_NAME } from '../constants';
 import { getLocalStorage, setLocalStorage, clearLocalStorage } from '../utils/storageUtils'
 import axios from 'axios';
 import { message } from 'antd';
@@ -11,7 +11,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (credentials: { username: string; password: string }) => any;
+  login: (credentials: { username: string; password: string; clientCode: string }) => any;
   logout: () => void;
   isAuthenticated: boolean;
   token: string | null;
@@ -25,12 +25,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Load token & user from localStorage on mount
 
-  const login = async (credentials: { username: string; password: string }) => {
+  const login = async (credentials: { username: string; password: string; clientCode: string }) => {
     try {
-      const response = await axios.post(`${ BASE_URL }/auth/login`, credentials);
+      const response = await axios.post(
+        `${ BASE_URL }/auth/login`,
+        credentials,
+        {
+          headers: {
+            'client-code': credentials.clientCode,
+          },
+        }
+      );
       if (response) {
         // Save token and user info
         setLocalStorage("username", credentials.username);
+        setLocalStorage(CLIENT_CODE, credentials.clientCode);
         setLocalStorage(JWT_TOKEN, response?.data?.data?.loginInfo?.accessToken);
         setLocalStorage(PERMISSION_KEY, response?.data?.data?.loginInfo?.permissions);
         setToken(response?.data?.data?.loginInfo?.accessToken)
@@ -54,6 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setToken(null);
     clearLocalStorage(JWT_TOKEN);
     clearLocalStorage(PERMISSION_KEY);
+    clearLocalStorage(CLIENT_CODE);
   };
   const isAuthenticated = !!getLocalStorage(JWT_TOKEN);
 

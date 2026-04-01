@@ -1,5 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import { BASE_URL, JWT_TOKEN, PERMISSION_KEY } from '../constants';
+import { BASE_URL, JWT_TOKEN, PERMISSION_KEY, CLIENT_CODE, CLIENT_NAME } from '../constants';
 
 
 import { clearLocalStorage, getLocalStorage, setLocalStorage } from './storageUtils';
@@ -8,16 +8,27 @@ import { clearLocalStorage, getLocalStorage, setLocalStorage } from './storageUt
 // import { useNavigate } from 'react-router-dom';
 
 export function httpBase(isDownloadable: boolean = false, signal?: any) {
+    const safeGet = (key: string) => {
+        try {
+            return getLocalStorage(key);
+        } catch (error) {
+            return null;
+        }
+    };
+
+    const token = safeGet(JWT_TOKEN);
+    const clientCode = safeGet(CLIENT_CODE);
     const normalHeaders = {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        'X-XSRF-TOKEN': getLocalStorage(JWT_TOKEN),
-
+        ...(token ? { 'X-XSRF-TOKEN': token } : {}),
+        ...(clientCode ? { 'client-code': clientCode } : {}),
     };
     const downloadableHeaders = {
         Accept: '*/*',
         'Content-Type': 'application/json',
-        'X-XSRF-TOKEN': getLocalStorage(JWT_TOKEN),
+        ...(token ? { 'X-XSRF-TOKEN': token } : {}),
+        ...(clientCode ? { 'client-code': clientCode } : {}),
     };
     const api = axios.create({
         baseURL: `${ BASE_URL }`,
