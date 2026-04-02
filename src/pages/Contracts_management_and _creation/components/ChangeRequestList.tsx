@@ -1,5 +1,5 @@
-import React from 'react';
-import { Table, Button, Space, Popconfirm, Input, Tooltip, Tag } from 'antd';
+import React, { useState } from 'react';
+import { Table, Button, Space, Popconfirm, Input, Tooltip, Tag, Modal, Form } from 'antd';
 import { DeleteOutlined, SearchOutlined, EyeOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 
@@ -14,7 +14,7 @@ interface ChangeRequestListProps {
   };
   onDelete: (id: string) => void;
   onApprove: (id: string) => void;
-  onReject: (id: string) => void;
+  onReject: (id: string, remarks?: string) => void;
   onPageChange: (page: number, pageSize: number) => void;
   onSearch: (value: string) => void;
   onView: (value: any) => void;
@@ -48,6 +48,26 @@ const ChangeRequestList: React.FC<ChangeRequestListProps> = ({
   onSearch,
   onView,
 }) => {
+  const [rejectModalVisible, setRejectModalVisible] = useState(false);
+  const [selectedRejectId, setSelectedRejectId] = useState<string | null>(null);
+  const [remarks, setRemarks] = useState('');
+  const [form] = Form.useForm();
+
+  const handleRejectClick = (id: string) => {
+    setSelectedRejectId(id);
+    setRemarks('');
+    form.resetFields();
+    setRejectModalVisible(true);
+  };
+
+  const handleRejectConfirm = () => {
+    if (selectedRejectId) {
+      onReject(selectedRejectId, remarks);
+      setRejectModalVisible(false);
+      setSelectedRejectId(null);
+      setRemarks('');
+    }
+  };
   const columns: ColumnsType<ChangeRequest> = [
     {
       title: 'SN',
@@ -78,12 +98,12 @@ const ChangeRequestList: React.FC<ChangeRequestListProps> = ({
       key: 'requestedAt',
       render: (date: string) => (date ? new Date(date).toLocaleString() : 'N/A'),
     },
-    {
-      title: 'Remarks',
-      dataIndex: 'remarks',
-      key: 'remarks',
-      render: (remarks?: string | null) => remarks || '—',
-    },
+    // {
+    //   title: 'Remarks',
+    //   dataIndex: 'remarks',
+    //   key: 'remarks',
+    //   render: (remarks?: string | null) => remarks || '—',
+    // },
     {
       title: 'Actions',
       key: 'actions',
@@ -99,27 +119,15 @@ const ChangeRequestList: React.FC<ChangeRequestListProps> = ({
             </Tooltip>
           )}
           {record.status?.toUpperCase() !== 'REJECTED' && (
-            <Popconfirm
-              title="Reject this change request?"
-              onConfirm={() => onReject(record.id)}
-              okText="Yes"
-              cancelText="No"
-            >
-              <Tooltip title="Reject Change Request">
-                <Button type="link" danger icon={<CloseOutlined />} />
-              </Tooltip>
-            </Popconfirm>
-          )}
-          <Popconfirm
-            title="Delete this change request?"
-            onConfirm={() => onDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Tooltip title="Delete Change Request">
-              <Button type="link" danger icon={<DeleteOutlined />} />
+            <Tooltip title="Reject Change Request">
+              <Button
+                type="link"
+                danger
+                icon={<CloseOutlined />}
+                onClick={() => handleRejectClick(record.id)}
+              />
             </Tooltip>
-          </Popconfirm>
+          )}
         </Space>
       ),
     },
@@ -150,6 +158,42 @@ const ChangeRequestList: React.FC<ChangeRequestListProps> = ({
         }}
         scroll={{ x: 2400 }}
       />
+
+      <Modal
+        title="Reject Change Request"
+        open={rejectModalVisible}
+        onOk={handleRejectConfirm}
+        onCancel={() => {
+          setRejectModalVisible(false);
+          setSelectedRejectId(null);
+          setRemarks('');
+        }}
+        okText="Reject"
+        cancelText="Cancel"
+        okButtonProps={{ danger: true }}
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item
+            label="Remarks (Optional)"
+            name="remarks"
+            rules={[
+              {
+                max: 500,
+                message: 'Remarks cannot exceed 500 characters',
+              },
+            ]}
+          >
+            <Input.TextArea
+              placeholder="Enter your remarks for rejection..."
+              rows={4}
+              maxLength={500}
+              showCount
+              value={remarks}
+              onChange={(e) => setRemarks(e.target.value)}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };

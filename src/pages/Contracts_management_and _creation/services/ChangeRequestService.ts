@@ -39,16 +39,16 @@ export const ChangeRequestService = {
 
   approveChangeRequest: async (id: string): Promise<any> => {
     try {
-      const response = await update(`contracts/change-requests/${id}/approve`, {});
+      const response = await store(`contracts/change-requests/${id}/approve`, {});
       return response.data;
     } catch (error) {
       handleApiError(error);
     }
   },
 
-  rejectChangeRequest: async (id: string): Promise<any> => {
+  rejectChangeRequest: async (id: string, payload?: { remarks?: string }): Promise<any> => {
     try {
-      const response = await update(`contracts/change-requests/${id}/reject`, {});
+      const response = await store(`contracts/change-requests/${id}/reject`, payload || {});
       return response.data;
     } catch (error) {
       handleApiError(error);
