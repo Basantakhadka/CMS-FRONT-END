@@ -51,9 +51,9 @@ const ChangeRequestContainer: React.FC = () => {
     }
   };
 
-  const handleReject = async (id: string) => {
+  const handleReject = async (id: string, remarks?: string) => {
     try {
-      await dispatch(rejectChangeRequest(id)).unwrap();
+      await dispatch(rejectChangeRequest({ id, remarks })).unwrap();
       message.success('Change request rejected');
       setReload((prev) => !prev);
     } catch (error) {

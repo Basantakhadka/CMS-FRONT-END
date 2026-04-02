@@ -59,8 +59,10 @@ export const approveChangeRequest = createAsyncThunk(
 
 export const rejectChangeRequest = createAsyncThunk(
   'changeRequests/rejectChangeRequest',
-  async (id: string) => {
-    const response = await ChangeRequestService.rejectChangeRequest(id);
+  async (params: { id: string; remarks?: string }) => {
+    const response = await ChangeRequestService.rejectChangeRequest(params.id, {
+      remarks: params.remarks,
+    });
     return response;
   }
 );
