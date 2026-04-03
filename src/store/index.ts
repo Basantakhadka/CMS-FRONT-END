@@ -6,6 +6,7 @@ import contractReducer from './slices/contractSlice';
 import contractAlertReducer from './slices/contractAlertSlice';
 import newPasswordReducer from './slices/newPasswordSlice';
 import changeRequestReducer from './slices/changeRequestSlice';
+import auditLogReducer from './slices/auditLogSlice';
 
 export const store = configureStore({
     reducer: {
@@ -16,7 +17,7 @@ export const store = configureStore({
         changeRequests: changeRequestReducer,
         alerts: contractAlertReducer,
         newPassword: newPasswordReducer,
-        
+        auditLogs: auditLogReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

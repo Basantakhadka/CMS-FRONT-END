@@ -36,3 +36,4 @@ export const IAM_ROLES_UPDATE = 'iam:roles:update';
 export const IAM_ROLES_DELETE = 'iam:roles:delete';
 export const IAM_ROLES_EDIT = 'iam:roles:edit';
 export const IAM_USERS_DELETE = 'iam:users:delete';
+export const IAM_AUDIT_LOGS_LIST = 'iam:auditLogs:list';
