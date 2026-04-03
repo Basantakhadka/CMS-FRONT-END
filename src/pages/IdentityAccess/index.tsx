@@ -6,6 +6,7 @@ const GeneralContainer = lazy(() => import('./General/containers/GeneralContaine
 const UsersContainer = lazy(() => import('./Users/containers/UsersContainer'));
 const RolesContainer = lazy(() => import('./Roles/containers/RolesContainer'));
 const AddRoleContainer = lazy(() => import('./Roles/containers/AddRoleContainer'));
+const AuditLog = lazy(() => import('./AuditLog'));
 
 const IdentityAccessRoutes: React.FC = () => {
   return (
@@ -17,6 +18,7 @@ const IdentityAccessRoutes: React.FC = () => {
         {/* Add Role page */}
         <Route path="/roles/add" element={<AddRoleContainer />} />
         <Route path="/roles/edit/:id" element={<AddRoleContainer />} />
+        <Route path="/audit-logs" element={<AuditLog />} />
       </Routes>
     </Suspense>
   );

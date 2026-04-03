@@ -12,11 +12,12 @@ import {
   TeamOutlined,
   AlertOutlined,
   FileTextOutlined,
+  AuditOutlined,
 } from '@ant-design/icons';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './MainLayout.css';
-import { DASHBOARD, CONTRACTS, IAM_GENERAL_PASSWORDPOLICY, IAM_USERS_LIST, ALERTS, ALERTS_LIST } from '../../constants/PermissionConfig';
+import { DASHBOARD, CONTRACTS, IAM_GENERAL_PASSWORDPOLICY, IAM_USERS_LIST, ALERTS, ALERTS_LIST, IAM_AUDIT_LOGS_LIST } from '../../constants/PermissionConfig';
 import { PERMISSION_KEY, CLIENT_CODE, CLIENT_NAME } from '../../constants';
 import { getLocalStorage, setLocalStorage } from '../../utils/storageUtils';
 import { store } from '../../utils/httpUtil';
@@ -140,6 +141,12 @@ const MainLayout: React.FC = () => {
           key: '/iam/roles',
           icon: <TeamOutlined />,
           label: 'Roles',
+          rights: [IAM_USERS_LIST],
+        },
+        {
+          key: '/iam/audit-logs',
+          icon: <AuditOutlined />,
+          label: 'User Audit Logs',
           rights: [IAM_USERS_LIST],
         },
       ],
