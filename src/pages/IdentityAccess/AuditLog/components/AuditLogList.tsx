@@ -52,6 +52,11 @@ const AuditLogList: React.FC<AuditLogListProps> = ({
       dataIndex: 'actorUserName',
       key: 'actorUserName',
     },
+     {
+      title: 'Action',
+      dataIndex: 'action',
+      key: 'action',
+    },
     {
       title: 'Resource Type',
       dataIndex: 'resourceType',
