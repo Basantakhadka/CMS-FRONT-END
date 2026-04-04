@@ -50,6 +50,10 @@ const AuditLogViewModal: React.FC<AuditLogViewModalProps> = ({
             <Descriptions.Item label="Performed At">
               {new Date(auditLog.performedAt).toLocaleString()}
             </Descriptions.Item>
+            <Descriptions.Item label="Action">
+              {auditLog.action}
+            </Descriptions.Item>
+           
             {/* <Descriptions.Item label="Previous Value">
               <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word', margin: 0 }}>
                 {typeof auditLog.previousValue === 'string' ? auditLog.previousValue : JSON.stringify(auditLog.previousValue, null, 2)}

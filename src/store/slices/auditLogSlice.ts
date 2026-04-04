@@ -13,6 +13,7 @@ export interface AuditLog {
     errorMessage: string;
     performedAt: string;
     clientCode: string;
+    action: string;
 }
 
 export interface AuditLogState {
