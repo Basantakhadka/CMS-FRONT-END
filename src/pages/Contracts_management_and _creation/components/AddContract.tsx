@@ -247,7 +247,10 @@ const AddContract: React.FC<AddContractProps> = ({ onSave, onCancel, initialData
                     {/* Contract Value & Jurisdiction */}
                     <Row gutter={16}>
                         <Col xs={24} md={12}>
-                            <Form.Item label="Contract Value" name="contractValue">
+                            <Form.Item label="Contract Value" name="contractValue"  rules={[
+                            { required: true, message: 'Please enter contract value' },
+
+                        ]}>
                                 <Input prefix={<DollarOutlined />} placeholder="e.g., 50,000" />
                             </Form.Item>
                         </Col>
