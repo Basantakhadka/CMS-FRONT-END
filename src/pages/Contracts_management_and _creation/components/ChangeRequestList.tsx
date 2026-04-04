@@ -113,7 +113,7 @@ const ChangeRequestList: React.FC<ChangeRequestListProps> = ({
           <Tooltip title="View Change Request">
             <Button type="link" icon={<EyeOutlined />} onClick={() => onView(record)} />
           </Tooltip>
-          {record.status?.toUpperCase() !== 'APPROVED' && (
+          {record.status?.toUpperCase() !== 'APPROVED' && record.status?.toUpperCase() !== 'REJECTED' && (
             <Tooltip title="Mark Approved">
               <Button type="link" icon={<CheckOutlined />} onClick={() => onApprove(record.id)} />
             </Tooltip>
