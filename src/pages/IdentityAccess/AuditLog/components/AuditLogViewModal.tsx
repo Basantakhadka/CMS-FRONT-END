@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Descriptions, Spin } from 'antd';
-import type { AuditLog } from '../../../../store/slices/auditLogSlice';
+import type { AuditLog, AuditLogValue } from '../../../../store/slices/auditLogSlice';
 
 interface AuditLogViewModalProps {
   visible: boolean;
@@ -8,6 +8,40 @@ interface AuditLogViewModalProps {
   loading: boolean;
   onCancel: () => void;
 }
+
+const renderAuditValue = (
+  val: AuditLogValue | null,
+  compare: AuditLogValue | null,
+  color: string
+): React.ReactNode => {
+  if (!val) return <span>N/A</span>;
+  const fields: { label: string; key: keyof AuditLogValue }[] = [
+    { label: 'User ID', key: 'userId' },
+    { label: 'Username', key: 'userName' },
+    { label: 'Employee ID', key: 'employeeId' },
+  ];
+  const parts = fields
+    .filter(({ key }) => val[key])
+    .map(({ label, key }) => {
+      const changed = compare?.[key] !== val[key];
+      return (
+        <span key={key} style={changed ? { color, fontWeight: 600 } : undefined}>
+          {label}: {val[key]}
+        </span>
+      );
+    });
+  if (!parts.length) return <span>N/A</span>;
+  return (
+    <>
+      {parts.map((part, i) => (
+        <React.Fragment key={i}>
+          {part}
+          {i < parts.length - 1 && <span style={{ color: '#999' }}> | </span>}
+        </React.Fragment>
+      ))}
+    </>
+  );
+};
 
 const AuditLogViewModal: React.FC<AuditLogViewModalProps> = ({
   visible,
@@ -53,17 +87,12 @@ const AuditLogViewModal: React.FC<AuditLogViewModalProps> = ({
             <Descriptions.Item label="Action">
               {auditLog.action}
             </Descriptions.Item>
-           
-            {/* <Descriptions.Item label="Previous Value">
-              <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word', margin: 0 }}>
-                {typeof auditLog.previousValue === 'string' ? auditLog.previousValue : JSON.stringify(auditLog.previousValue, null, 2)}
-              </pre>
+            <Descriptions.Item label="Previous Value">
+              {renderAuditValue(auditLog.previousValue, auditLog.newValue, '#d46b08')}
             </Descriptions.Item>
             <Descriptions.Item label="New Value">
-              <pre style={{ whiteSpace: 'pre-wrap', wordWrap: 'break-word', margin: 0 }}>
-                {typeof auditLog.newValue === 'string' ? auditLog.newValue : JSON.stringify(auditLog.newValue, null, 2)}
-              </pre>
-            </Descriptions.Item> */}
+              {renderAuditValue(auditLog.newValue, auditLog.previousValue, '#389e0d')}
+            </Descriptions.Item>
           </Descriptions>
         )}
       </Spin>
