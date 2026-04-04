@@ -1,6 +1,12 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import { auditLogService } from '../../pages/IdentityAccess/AuditLog/services/auditLogService';
 
+export interface AuditLogValue {
+    userId?: string;
+    userName?: string;
+    employeeId?: string;
+}
+
 export interface AuditLog {
     id: string;
     actorUserId: string;
@@ -8,8 +14,8 @@ export interface AuditLog {
     resourceType: string;
     resourceId: string;
     resourceLabel: string;
-    previousValue: string;
-    newValue: string;
+    previousValue: AuditLogValue | null;
+    newValue: AuditLogValue | null;
     errorMessage: string;
     performedAt: string;
     clientCode: string;
