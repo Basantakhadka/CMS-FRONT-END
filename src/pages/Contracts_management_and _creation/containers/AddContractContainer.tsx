@@ -16,18 +16,19 @@ const AddContractContainer: React.FC = () => {
     try {
       if (id) {
         await dispatch(updateContract({ values, id: id })).unwrap();
-        message.success('Contract updated successfully')
+        message.success('Contract change request submitted for approval');
         navigate('/contracts');
         return
       } else {
         await dispatch(createContract(values as CreateContractPayload)).unwrap();
-        message.success('Contract created successfully');
+        message.success('Contract creation request submitted for approval');
         navigate('/contracts');
 
         return
       }
 
     } catch (err) {
+      message.error(err?.message || 'Failed to submit contract request');
       console.error('Caught error:', err);
     }
   };
