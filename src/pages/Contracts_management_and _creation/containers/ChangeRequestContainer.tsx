@@ -27,10 +27,10 @@ const ChangeRequestContainer: React.FC = () => {
   const handleDelete = async (changeRequestId: string) => {
     try {
       await dispatch(deleteChangeRequest(changeRequestId)).unwrap();
-      message.success('Change request deleted successfully');
+      message.success('Contract deletion request submitted for approval');
       setReload((prev) => !prev);
     } catch (error) {
-      message.error('Failed to delete change request');
+      message.error(error.message || 'Failed to submit contract deletion request');
     }
   };
 
@@ -47,7 +47,7 @@ const ChangeRequestContainer: React.FC = () => {
       message.success('Change request approved');
       setReload((prev) => !prev);
     } catch (error) {
-      message.error('Failed to approve change request');
+      message.error('Creator cannot approve their own change request');
     }
   };
 
@@ -57,7 +57,7 @@ const ChangeRequestContainer: React.FC = () => {
       message.success('Change request rejected');
       setReload((prev) => !prev);
     } catch (error) {
-      message.error('Failed to reject change request');
+      message.error('Creator cannot reject their own change request');
     }
   };
 
