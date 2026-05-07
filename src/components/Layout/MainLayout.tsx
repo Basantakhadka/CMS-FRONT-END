@@ -83,7 +83,7 @@ const MainLayout: React.FC = () => {
       message.success('Client details saved successfully');
       handleClientModalClose();
     } catch (error) {
-      const errMsg = 
+      const errMsg =
         (error as any)?.response?.data?.message ||
         (error as any)?.message ||
         'Failed to save client details';
@@ -114,12 +114,16 @@ const MainLayout: React.FC = () => {
       label: 'Dashboard',
       rights: [DASHBOARD],
     },
-    {
-      key: '/contracts',
-      icon: <FileTextOutlined />,
-      label: 'Contracts',
-      rights: [CONTRACTS],
-    },
+    ...(clientCode !== '000'
+      ? [
+        {
+          key: '/contracts',
+          icon: <FileTextOutlined />,
+          label: 'Contracts',
+          rights: [CONTRACTS],
+        },
+      ]
+      : []),
     {
       key: 'identity-access',
       icon: <SecurityScanOutlined />,
@@ -151,19 +155,34 @@ const MainLayout: React.FC = () => {
         },
       ],
     },
-    {
-      key: '/alerts',
-      icon: <AlertOutlined />,
-      label: 'Alerts',
-      rights: [ALERTS, ALERTS_LIST],
-    },
+    ...(clientCode !== '000'
+      ? [
+        {
+          key: '/alerts',
+          icon: <AlertOutlined />,
+          label: 'Alerts',
+          rights: [ALERTS, ALERTS_LIST],
+        },
+      ]
+      : []),
+
+       ...(clientCode === '000'
+      ? [
+        {
+          key: '/client',
+          icon: <UserOutlined />,
+          label: 'Client Management',
+          rights: [DASHBOARD],
+        },
+      ]
+      : []),
   ];
 
   // Filter menu items based on permissions
   const filteredMenuItems = menuItems
     .map((item) => {
       if (item.children) {
-        const filteredChildren = item.children.filter((child:any) =>
+        const filteredChildren = item.children.filter((child: any) =>
           child.rights?.some((right: string) => hasPermission(right))
         );
         if (filteredChildren.length > 0) return { ...item, children: filteredChildren };
@@ -332,10 +351,19 @@ const MainLayout: React.FC = () => {
                 path="/dashboard/*"
                 element={<AuthRoute isAuthorized={hasPermission('dashboard')} element={<DashboardRoutes />} />}
               />
-              <Route
-                path="/contracts/*"
-                element={<AuthRoute isAuthorized={hasPermission('contracts')} element={<ContractsView />} />}
-              />
+              {
+                clientCode !== '000' && (
+                  <Route
+                    path="/contracts/*"
+                    element={
+                      <AuthRoute
+                        isAuthorized={hasPermission('contracts')}
+                        element={<ContractsView />}
+                      />
+                    }
+                  />
+                )
+              }
               <Route
                 path="/iam/*"
                 element={<AuthRoute isAuthorized={hasPermission('iam')} element={<IdentityAccessRoutes />} />}
@@ -344,10 +372,12 @@ const MainLayout: React.FC = () => {
                 path="/settings/*"
                 element={<AuthRoute isAuthorized={hasPermission('settings')} element={<SettingsRoutes />} />}
               />
+              {clientCode !== '000' && (
               <Route
                 path="/alerts/*"
                 element={<AuthRoute isAuthorized={hasPermission('alerts')} element={<AlertsRoutes />} />}
               />
+              )}
               <Route path="/" element={<AuthRoute isAuthorized={true} element={<DashboardRoutes />} />} />
             </Routes>
           </Suspense>
