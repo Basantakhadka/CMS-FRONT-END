@@ -70,7 +70,7 @@ const auditLogSlice = createSlice({
         },
 
         setPagination: (state, action: PayloadAction<{ page: number; pageSize: number }>) => {
-            state.pageInfo = { ...state.pageInfo, page: action.payload.page, size: action.payload.pageSize };
+            state.pageInfo = { ...state.pageInfo, current: action.payload.page, size: action.payload.pageSize };
         },
     },
     extraReducers: (builder) => {
