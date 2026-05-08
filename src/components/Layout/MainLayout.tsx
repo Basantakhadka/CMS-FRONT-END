@@ -22,6 +22,7 @@ import { PERMISSION_KEY, CLIENT_CODE, CLIENT_NAME } from '../../constants';
 import { getLocalStorage, setLocalStorage } from '../../utils/storageUtils';
 import { store } from '../../utils/httpUtil';
 import AuthRoute from './AuthRoute';
+import ClientRoutes from '../../pages/Client_Management';
 
 const readLocalStorageValue = (key: string) => {
   try {
@@ -379,6 +380,8 @@ const MainLayout: React.FC = () => {
               />
               )}
               <Route path="/" element={<AuthRoute isAuthorized={true} element={<DashboardRoutes />} />} />
+
+              <Route path="/client/*" element={<AuthRoute isAuthorized={true} element={<ClientRoutes />} />} />
             </Routes>
           </Suspense>
         </Content>
