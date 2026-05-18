@@ -20,7 +20,7 @@ import './MainLayout.css';
 import { DASHBOARD, CONTRACTS, IAM_GENERAL_PASSWORDPOLICY, IAM_USERS_LIST, ALERTS, ALERTS_LIST, IAM_AUDIT_LOGS_LIST } from '../../constants/PermissionConfig';
 import { PERMISSION_KEY, CLIENT_CODE, CLIENT_NAME } from '../../constants';
 import { getLocalStorage, setLocalStorage } from '../../utils/storageUtils';
-import { store } from '../../utils/httpUtil';
+import { store, fetch as apiCall } from '../../utils/httpUtil';
 import AuthRoute from './AuthRoute';
 import ClientRoutes from '../../pages/Client_Management';
 
@@ -200,9 +200,15 @@ const MainLayout: React.FC = () => {
     if (isMobile) setCollapsed(true);
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/auth/login');
+  const handleLogout = async () => {
+    try {
+      await apiCall('auth/logout');
+      logout();
+      navigate('/auth/login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      message.error('Failed to logout. Please try again.');
+    }
   };
 
   const userMenuItems: MenuProps['items'] = [

@@ -89,22 +89,30 @@ const UserFormModal: React.FC<UserFormModalProps> = ({
           rules={[{ required: true, message: 'Please select at least one role' }]}
         >
           <Select
-            mode="multiple" 
+            mode="multiple"
             placeholder="Select roles"
-            options={roles?.data?.map((role: any) => ({ label: role.label, value: role.value }))}
+            showSearch
+            optionFilterProp="label"
+            filterOption={(input, option) =>
+              (String(option?.label) ?? '').toLowerCase().includes(input.toLowerCase())
+            }
+            options={roles?.data?.map((role: any) => ({
+              label: role.label,
+              value: role.value,
+            }))}
           />
         </Form.Item>
-        <Form.Item
-          name="active"
-          hidden
-          initialValue={true}
+      <Form.Item
+        name="active"
+        hidden
+        initialValue={true}
 
-        >
-          <Input />
-        </Form.Item>
+      >
+        <Input />
+      </Form.Item>
 
-      </Form>
-    </Modal>
+    </Form>
+    </Modal >
   );
 };
 
