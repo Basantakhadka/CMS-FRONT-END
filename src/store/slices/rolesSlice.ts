@@ -13,12 +13,14 @@ export interface Role {
 export interface CreateRolePayload {
     title: string;
     permissions: string[];
+    contractIds?: string[];
     active: boolean;
 }
 
 export interface RolesState {
     roles: any;
     permissions: any;
+    contracts: any;
     selectedRole: any | null;
     loading: boolean;
     error: string | null;
@@ -32,6 +34,7 @@ export interface RolesState {
 const initialState: RolesState = {
     roles: [],
     permissions: [],
+    contracts: [],
     selectedRole: null,
     loading: false,
     error: null,
@@ -64,6 +67,14 @@ export const fetchPermissions = createAsyncThunk(
     'roles/fetchPermissions',
     async () => {
         const response = await rolesService.getPermissions();
+        return response;
+    }
+);
+
+export const fetchContractsForRoles = createAsyncThunk(
+    'roles/fetchContractsForRoles',
+    async () => {
+        const response = await rolesService.getContractsDropdown();
         return response;
     }
 );
@@ -153,6 +164,19 @@ const rolesSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message || 'Failed to fetch permissions';
             })
+            // Fetch Contracts Dropdown
+            .addCase(fetchContractsForRoles.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchContractsForRoles.fulfilled, (state, action: PayloadAction<any>) => {
+                state.loading = false;
+                state.contracts = action.payload?.data;
+            })
+            .addCase(fetchContractsForRoles.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.error.message || 'Failed to fetch contracts';
+            })
             // Create Role
             .addCase(createRole.pending, (state) => {
                 state.loading = true;
@@ -171,7 +195,7 @@ const rolesSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(updateRole.fulfilled, (state, action: any) => {
+            .addCase(updateRole.fulfilled, (state) => {
                 state.loading = false;
 
             })
@@ -184,7 +208,7 @@ const rolesSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(deleteRole.fulfilled, (state, action: any) => {
+            .addCase(deleteRole.fulfilled, (state) => {
                 state.loading = false;
                 // state.roles = state.roles.filter((role: any) => role.id !== action.payload);
 

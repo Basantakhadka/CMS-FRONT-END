@@ -41,6 +41,15 @@ export const rolesService = {
     }
   },
 
+  getContractsDropdown: async (): Promise<any> => {
+    try {
+      const response = await fetch('contracts/dropdown/list');
+      return response.data;
+    } catch (error) {
+      handleApiError(error);
+    }
+  },
+
   createRole: async (roleData: CreateRolePayload): Promise<any> => {
     try {
       const response = await store('identity-access/roles', roleData);

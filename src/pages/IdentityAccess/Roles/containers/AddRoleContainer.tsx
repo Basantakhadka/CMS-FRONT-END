@@ -3,14 +3,18 @@ import { Breadcrumb, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import AddRoleForm from '../components/AddRoleForm';
-import { createRole, fetchPermissions, fetchRoleById, updateRole } from '../../../../store/slices/rolesSlice';
+import { createRole, fetchContractsForRoles, fetchPermissions, fetchRoleById, updateRole } from '../../../../store/slices/rolesSlice';
 import { useParams } from 'react-router-dom';
+import { CLIENT_CODE } from '../../../../constants';
+import { getLocalStorage } from '../../../../utils/storageUtils';
 
 const AddRoleContainer: React.FC = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
-    const { permissions, selectedRole } = useAppSelector(
+    const clientCode = getLocalStorage(CLIENT_CODE) || '';
+    const shouldShowContracts = clientCode !== '000';
+    const { permissions, selectedRole, contracts } = useAppSelector(
         (state) => state.roles
     );
 
@@ -18,6 +22,7 @@ const AddRoleContainer: React.FC = () => {
     const handleSubmit = async (payload: {
         title: string;
         permissions: string[];
+        contractIds: string[];
         active: true;
     }) => {
         try {
@@ -39,10 +44,13 @@ const AddRoleContainer: React.FC = () => {
 
     useEffect(() => {
         dispatch(fetchPermissions());
+        if (shouldShowContracts) {
+            dispatch(fetchContractsForRoles());
+        }
         if (id) {
             dispatch(fetchRoleById(id));
         }
-    }, [dispatch,id]);
+    }, [dispatch, id, shouldShowContracts]);
     return (
         <>
             <Breadcrumb style={{ marginBottom: 16 }}>
@@ -56,7 +64,13 @@ const AddRoleContainer: React.FC = () => {
             </Breadcrumb>
             <div style={{ padding: '24px 24px 24px 0px' }}>
 
-                <AddRoleForm onSubmit={handleSubmit} permissions={permissions} selectedRole={id ?selectedRole:[]} />
+                <AddRoleForm
+                    onSubmit={handleSubmit}
+                    permissions={permissions}
+                    contracts={contracts}
+                    showContractsField={shouldShowContracts}
+                    selectedRole={id ? selectedRole : []}
+                />
             </div>
 
         </>
