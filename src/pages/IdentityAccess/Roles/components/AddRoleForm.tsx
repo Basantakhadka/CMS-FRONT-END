@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Form, Input, Button, Space, Checkbox, Divider } from "antd";
+import { Form, Input, Button, Space, Checkbox, Divider, Select } from "antd";
 import { useParams } from "react-router-dom";
 
 interface PermissionChild {
@@ -16,12 +16,16 @@ interface PermissionGroup {
 interface AddRoleFormProps {
     onSubmit: any;
     permissions: PermissionGroup[];
+    contracts?: any;
+    showContractsField?: boolean;
     selectedRole?: any;
 }
 
 const AddRoleForm: React.FC<AddRoleFormProps> = ({
     onSubmit,
     permissions,
+    contracts,
+    showContractsField = true,
     selectedRole,
 }) => {
     const [form] = Form.useForm();
@@ -38,6 +42,10 @@ const AddRoleForm: React.FC<AddRoleFormProps> = ({
         if (selectedRole?.role && !initialized.current) {
             form.setFieldsValue({
                 title: selectedRole.role.title,
+                contractIds:
+                    selectedRole.role.contract ||
+                    selectedRole.role.contract?.map((contract: any) => contract?.id || contract?.value).filter(Boolean) ||
+                    [],
             });
             setSelectedPermissions(selectedRole.role.permissions || []);
             initialized.current = true;
@@ -71,6 +79,7 @@ const AddRoleForm: React.FC<AddRoleFormProps> = ({
             onSubmit({
                 title: values.title,
                 permissions: selectedPermissions,
+                contractIds: values.contractIds || [],
                 active: true,
             });
 
@@ -94,6 +103,25 @@ const AddRoleForm: React.FC<AddRoleFormProps> = ({
             >
                 <Input placeholder="Enter role name" />
             </Form.Item>
+
+            {showContractsField && (
+                <Form.Item
+                    label="Contracts"
+                    name="contractIds"
+                    style={{ width: "25%" }}
+                >
+                    <Select
+                        mode="multiple"
+                        placeholder="Select contracts"
+                        allowClear
+                        optionFilterProp="label"
+                        options={(contracts?.data || []).map((contract: any) => ({
+                            label: contract.label,
+                            value: contract.value,
+                        }))}
+                    />
+                </Form.Item>
+            )}
 
             {/* PERMISSIONS */}
             <Form.Item label="Permissions">
