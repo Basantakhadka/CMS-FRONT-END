@@ -3,6 +3,7 @@ import { Table, Button, Space, Tag, Popconfirm, Input, Tooltip } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, SearchOutlined, EyeOutlined } from '@ant-design/icons';
 import type { User } from '../../../store/slices/usersSlice';
 import type { ColumnsType } from 'antd/es/table';
+import { hasPermission } from '../../../utils/commonUtils';
 
 interface ContractsListProps {
   contracts: any;
@@ -154,9 +155,10 @@ interface Contract {
           style={{ width: 300 }}
           prefix={<SearchOutlined />}
         />
+       { hasPermission("contracts:add") && (
         <Button type="primary" icon={<PlusOutlined />} onClick={onCreate}>
           Create Contract
-        </Button>
+        </Button>)}
       </div>
       <Table
         columns={columns}
